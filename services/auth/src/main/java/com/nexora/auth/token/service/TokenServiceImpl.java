@@ -4,6 +4,8 @@ import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.request.token.CreateRefreshTokenRequest;
 import com.nexora.auth.response.SuccessResponse;
 import com.nexora.auth.response.token.RefreshTokenResponse;
+import com.nexora.auth.response.token.TokenValidationResponse;
+import com.nexora.auth.security.JwtService;
 import com.nexora.auth.token.model.RefreshTokens;
 import com.nexora.auth.token.repository.TokenRepository;
 import com.nexora.auth.user.model.Users;
@@ -26,10 +28,18 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public SuccessResponse generateToken(CreateRefreshTokenRequest tokenRequest) {
         RefreshTokens refreshToken = tokenRepository.save(convertFromTokenRequestToToken(tokenRequest));
         return new SuccessResponse(refreshToken.getToken(), HttpStatus.OK.value(), LocalDateTime.now());
+    }
+
+    @Override
+    public TokenValidationResponse validateToken(String token) {
+        return jwtService.validateToken(token);
     }
 
     @Override
