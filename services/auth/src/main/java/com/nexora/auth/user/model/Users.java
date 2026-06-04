@@ -3,9 +3,7 @@ package com.nexora.auth.user.model;
 import com.nexora.auth.token.model.RefreshTokens;
 import com.nexora.auth.role.model.Roles;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -14,6 +12,8 @@ import java.util.*;
 @Table(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Users {
     @Id
@@ -33,7 +33,7 @@ public class Users {
 
     private LocalDateTime createdAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns =
@@ -47,7 +47,8 @@ public class Users {
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     private List<RefreshTokens> refreshTokens;
 }

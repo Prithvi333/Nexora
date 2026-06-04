@@ -1,12 +1,10 @@
 package com.nexora.auth.role;
 
-import com.nexora.auth.role.model.Roles;
-
-public enum RoleNames {
-    ROLE_ADMIN, ROLE_USER;
+public enum IRoleNames {
+    ADMIN, USER,CUSTOMER;
 
     public static boolean exists(String value) {
-        for (RoleNames role : values()) {
+        for (IRoleNames role : values()) {
             if (role.name().equalsIgnoreCase(value)) {
                 return true;
             }

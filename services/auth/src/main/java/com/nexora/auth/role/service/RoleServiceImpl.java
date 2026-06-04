@@ -1,12 +1,14 @@
 package com.nexora.auth.role.service;
 
 import com.nexora.auth.exception.roles.EmptyRoleList;
+import com.nexora.auth.exception.roles.RoleAlreadyAssociated;
+import com.nexora.auth.exception.roles.RoleAlreadyExist;
 import com.nexora.auth.exception.roles.RoleNotFound;
 import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.request.role.CreateRoleRequest;
 import com.nexora.auth.request.role.RoleResponse;
 import com.nexora.auth.response.SuccessResponse;
-import com.nexora.auth.role.RoleNames;
+import com.nexora.auth.role.IRoleNames;
 import com.nexora.auth.role.model.Roles;
 import com.nexora.auth.role.repository.RoleRepository;
 import com.nexora.auth.user.model.Users;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -34,10 +37,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleResponse createRole(CreateRoleRequest createRoleRequest) {
         String role = createRoleRequest.roleName().toUpperCase();
-        boolean isRoleExist = RoleNames.exists(role);
+        boolean isRoleExist = IRoleNames.exists(role);
         if (!isRoleExist) {
             throw new RoleNotFound("Role not found with role name " + role + " ");
         }
+        isRoleAlreadyExist(role);
         return convertFromRoleToRoleResponse(roleRepository.save(convertFromRoleRequestToRole(createRoleRequest)));
     }
 
@@ -48,6 +52,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleResponse> getAllRoles(Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        sortBy = sortBy == null ? "roleName" : sortBy;
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
         Page<Roles> page = roleRepository.findAll(pageable);
         if (page.isEmpty()) {
@@ -64,7 +69,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public SuccessResponse assignRole(String userUid, String roleUid) {
+    public SuccessResponse updateRole(String userUid, String roleUid, Boolean assign) {
         Optional<Users> optionalUsers = userRepository.findByUidAndEnabledTrue(userUid);
         if (optionalUsers.isEmpty()) {
             throw new UserNotFound("User not found with uid " + userUid + "");
@@ -76,11 +81,21 @@ public class RoleServiceImpl implements RoleService {
 
         Users user = optionalUsers.get();
         Roles role = optionalRoles.get();
-
-        user.getRoles().add(role);
+        boolean isExist = user.getRoles().stream().anyMatch(roles -> roles.getUid().equalsIgnoreCase(roleUid));
+        if (assign) {
+            if (isExist) {
+                throw new RoleAlreadyAssociated(role.getRoleName(), user.getUsername());
+            }
+            user.getRoles().add(role);
+        } else {
+            if (!isExist) {
+                throw new RoleNotFound("Role with name " + role.getRoleName() + " not associated with user with username " + user.getUsername() + "");
+            }
+            user.getRoles().removeIf(roles -> roles.getUid().equalsIgnoreCase(roleUid));
+        }
 
         userRepository.save(user);
-        return new SuccessResponse("" + role.getRoleName() + " has been assigned to the user with username " + user.getUsername() + " ", HttpStatus.OK.value(), LocalDateTime.now());
+        return new SuccessResponse("Role update successfully", HttpStatus.OK.value(), LocalDateTime.now());
     }
 
     private Roles findRoleByUid(String uid) {
@@ -92,7 +107,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     private Roles convertFromRoleRequestToRole(CreateRoleRequest roleRequest) {
-        return Roles.builder().roleName(roleRequest.roleName()).build();
+        return Roles.builder().uid(UUID.randomUUID().toString()).roleName("ROLE_" + roleRequest.roleName().toUpperCase()).build();
+    }
+
+    private void isRoleAlreadyExist(String roleName) {
+        roleName = "ROLE_" + roleName;
+        Optional<Roles> roles = roleRepository.findByRoleName(roleName);
+        if (roles.isPresent()) {
+            throw new RoleAlreadyExist(roleName.substring(5));
+        }
     }
 
     private RoleResponse convertFromRoleToRoleResponse(Roles roles) {

@@ -1,9 +1,12 @@
 package com.nexora.auth.response.token;
 
+import lombok.Builder;
+
+@Builder
 public record RefreshTokenResponse(
 
-        String accessToken,
-        String refreshToken
+        String refreshToken,
+        String expiryDate
 
 ) {
 }

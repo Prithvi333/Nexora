@@ -1,7 +1,11 @@
 package com.nexora.auth.exception;
 
 import com.nexora.auth.exception.roles.EmptyRoleList;
+import com.nexora.auth.exception.roles.RoleAlreadyAssociated;
+import com.nexora.auth.exception.roles.RoleAlreadyExist;
 import com.nexora.auth.exception.roles.RoleNotFound;
+import com.nexora.auth.exception.token.IncorrectUserNameOrPasswordException;
+import com.nexora.auth.exception.token.TokenException;
 import com.nexora.auth.exception.users.EmptyUserList;
 import com.nexora.auth.exception.users.PasswordException;
 import com.nexora.auth.exception.users.UserNotFound;
@@ -47,6 +51,30 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEmptyRoleListException(EmptyRoleList emptyRoleList) {
         ErrorResponse errorResponse = new ErrorResponse(emptyRoleList.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<ErrorResponse> handleTokenGenerationException(TokenException tokenGenerationException) {
+        ErrorResponse errorResponse = new ErrorResponse(tokenGenerationException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(IncorrectUserNameOrPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectPasswordException(IncorrectUserNameOrPasswordException incorrectUserNameOrPasswordException) {
+        ErrorResponse errorResponse = new ErrorResponse(incorrectUserNameOrPasswordException.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RoleAlreadyAssociated.class)
+    public ResponseEntity<ErrorResponse> handleRoleAlreadyAssociatedException(RoleAlreadyAssociated roleAlreadyAssociated) {
+        ErrorResponse errorResponse = new ErrorResponse(roleAlreadyAssociated.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoleAlreadyExist.class)
+    public ResponseEntity<ErrorResponse> handleRoleAlreadyExistException(RoleAlreadyExist roleAlreadyExist) {
+        ErrorResponse errorResponse = new ErrorResponse(roleAlreadyExist.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

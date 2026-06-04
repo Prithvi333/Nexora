@@ -16,6 +16,6 @@ public interface RoleService {
 
     SuccessResponse deleteRole(String roleUid);
 
-    SuccessResponse assignRole(String userUid, String roleUid);
+    SuccessResponse updateRole(String userUid, String roleUid, Boolean assign);
 
 }
