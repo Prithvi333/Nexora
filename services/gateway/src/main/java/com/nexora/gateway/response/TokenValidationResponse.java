@@ -1,8 +1,7 @@
 package com.nexora.gateway.response;
 
-public class TokenValidationResponse {
-
-    private boolean valid;
-    private String userId;
-    private String roles;
+public record TokenValidationResponse(
+        Boolean valid,
+        String userName,
+        String roles) {
 }
