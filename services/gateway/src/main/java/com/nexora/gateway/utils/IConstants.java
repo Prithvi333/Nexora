@@ -1,7 +1,9 @@
 package com.nexora.gateway.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public interface IConstants {
 
-    public static final String LOGIN_URI = "/api/auth/user/login";
-    public static  final String REGISTER_URI = "/api/auth/user/";
+    List<String> allowedUrls = Arrays.asList("/api/auth/user/login", "/api/auth/user/signup");
 }

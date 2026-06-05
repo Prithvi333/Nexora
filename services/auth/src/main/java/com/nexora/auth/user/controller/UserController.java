@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
+    @PostMapping(IUrls.USER_REGISTER)
     @Operation(summary = "User Creation", description = "use to create the user")
     public ResponseEntity<RegisterResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         return new ResponseEntity<>(userService.registerUser(registerRequest), HttpStatus.CREATED);

@@ -33,12 +33,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -116,7 +113,14 @@ public class UserServiceImpl implements UserService {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         Map<String, Object> tokenMap = jwtService.generateToken(authentication);
-        String refreshToken = generateRefreshToken(tokenMap.get("username"));
+        String userName = tokenMap.get("username").toString();
+        Optional<Users> user = userRepository.findByEmail(userName);
+        boolean isEmptyRefreshToken = user.get().getRefreshTokens().isEmpty();
+        boolean isRefreshTokenExpired = user.get().getRefreshTokens().stream().noneMatch(token -> (token.getExpiryDate().isAfter(LocalDateTime.now()) || (token.getExpiryDate().isEqual(LocalDateTime.now()))));
+        String refreshToken = "";
+        if (isEmptyRefreshToken || isRefreshTokenExpired) {
+            refreshToken = generateRefreshToken(userName);
+        }
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(tokenMap.get("accessToken").toString()).build();
     }
 
@@ -132,8 +136,8 @@ public class UserServiceImpl implements UserService {
         return new SuccessResponse("Logout successfully", HttpStatus.OK.value(), LocalDateTime.now());
     }
 
-    private String generateRefreshToken(Object userName) {
-        Optional<Users> user = userRepository.findByEmailAndEnabledTrue(userName.toString());
+    private String generateRefreshToken(String userName) {
+        Optional<Users> user = userRepository.findByEmailAndEnabledTrue(userName);
         if (user.isEmpty()) {
             throw new UserNotFound("User not found with username " + user + "");
         }
