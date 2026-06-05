@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Builder
 public record CreateRefreshTokenRequest(
 
@@ -13,7 +15,7 @@ public record CreateRefreshTokenRequest(
         @NotBlank(message = "Token is required")
         String token,
 
-        LocalDate expiryDate
+        LocalDateTime expiryDate
 
 ) {
 }

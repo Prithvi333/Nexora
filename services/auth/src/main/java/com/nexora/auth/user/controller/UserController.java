@@ -6,7 +6,6 @@ import com.nexora.auth.request.user.UpdateUserRequest;
 import com.nexora.auth.response.SuccessResponse;
 import com.nexora.auth.response.token.TokenResponse;
 import com.nexora.auth.response.user.RegisterResponse;
-import com.nexora.auth.response.user.UserResponse;
 import com.nexora.auth.user.service.UserService;
 import com.nexora.auth.utils.contants.IUrls;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,17 +34,6 @@ public class UserController {
     @Operation(summary = "Update User", description = "use to update the user")
     public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequest userRequest) {
         return new ResponseEntity<>(userService.updateUser(userRequest), HttpStatus.OK);
-    }
-
-    @GetMapping
-    @Operation(summary = "Fetch Users", description = "Used to fetch user data")
-    public ResponseEntity<List<UserResponse>> fetchUserDetails(@RequestParam(required = false) String uid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
-
-        if (uid != null) {
-            return new ResponseEntity<>(List.of(userService.getUserResponseByUserUid(uid)), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(userService.getAllUsers(pageNo, pageSize, sortBy, direction), HttpStatus.OK);
-
     }
 
     @PostMapping(IUrls.USER_LOGIN)

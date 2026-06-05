@@ -16,10 +16,6 @@ public interface UserService {
 
     String updateUser(UpdateUserRequest userRequest);
 
-    UserResponse getUserResponseByUserUid(String uid);
-
-    List<UserResponse> getAllUsers(Integer pageNo, Integer pageSize, String sortBy, String direction);
-
     TokenResponse userLogin(LoginRequest loginRequest);
 
     SuccessResponse userLogout(String refreshToken);

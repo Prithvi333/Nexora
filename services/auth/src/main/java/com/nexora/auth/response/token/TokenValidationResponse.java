@@ -6,6 +6,7 @@ import lombok.Builder;
 public record TokenValidationResponse(
         Boolean valid,
         String username,
-        String roles
+        String roles,
+        String newToken
 ) {
 }

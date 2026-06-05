@@ -24,10 +24,4 @@ public class TokenController {
         return new ResponseEntity<>(tokenService.findByUserUid(userUid), HttpStatus.OK);
     }
 
-    @PostMapping("{token}")
-    public ResponseEntity<TokenValidationResponse> validateToken(String token) {
-        return new ResponseEntity<>(tokenService.validateToken(token), HttpStatus.OK);
-    }
-
-
 }

@@ -15,6 +15,7 @@ import com.nexora.auth.response.user.RegisterResponse;
 import com.nexora.auth.response.user.UserResponse;
 import com.nexora.auth.role.model.Roles;
 import com.nexora.auth.security.JwtService;
+import com.nexora.auth.security.SecurityConfiguration;
 import com.nexora.auth.token.model.RefreshTokens;
 import com.nexora.auth.token.repository.TokenRepository;
 import com.nexora.auth.token.service.TokenService;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -61,9 +63,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegisterResponse registerUser(RegisterRequest registerRequest) {
-        Users user = convertToUserFromUserRequest(registerRequest);
+        Users user = GlobalUtility.convertToUserFromUserRequest(registerRequest);
         user.setPassword(passwordEncoder.encode(registerRequest.password()));
-        return convertToRegisterResponseFromUser(userRepository.save(user));
+        return GlobalUtility.convertToRegisterResponseFromUser(userRepository.save(user));
     }
 
     @Override
@@ -105,27 +107,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserResponseByUserUid(String uid) {
-        Optional<Users> user = userRepository.findByUidAndEnabledTrue(uid);
-        if (user.isEmpty()) {
-            throw new UserNotFound("User not found with uid " + uid + "");
-        }
-        return convertFromUserToUserResponse(user.get());
-
-    }
-
-    @Override
-    public List<UserResponse> getAllUsers(Integer pageNo, Integer pageSize, String sortBy, String direction) {
-        sortBy = sortBy == null ? "username" : sortBy;
-        Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
-        Page<Users> page = userRepository.findAll(pageable);
-        if (page.isEmpty()) {
-            throw new EmptyUserList();
-        }
-        return page.getContent().stream().filter(Users::getEnabled).map(this::convertFromUserToUserResponse).toList();
-    }
-
-    @Override
     public TokenResponse userLogin(LoginRequest loginRequest) {
         Authentication authentication;
         try {
@@ -133,6 +114,7 @@ public class UserServiceImpl implements UserService {
         } catch (Exception ex) {
             throw new IncorrectUserNameOrPasswordException();
         }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         Map<String, Object> tokenMap = jwtService.generateToken(authentication);
         String refreshToken = generateRefreshToken(tokenMap.get("username"));
         return TokenResponse.builder().refreshToken(refreshToken).accessToken(tokenMap.get("accessToken").toString()).build();
@@ -155,27 +137,8 @@ public class UserServiceImpl implements UserService {
         if (user.isEmpty()) {
             throw new UserNotFound("User not found with username " + user + "");
         }
-        CreateRefreshTokenRequest tokenRequest = CreateRefreshTokenRequest.builder().userUid(user.get().getUid()).expiryDate(LocalDate.now().plus(3, ChronoUnit.DAYS)).token(UUID.randomUUID().toString()).build();
+        CreateRefreshTokenRequest tokenRequest = CreateRefreshTokenRequest.builder().userUid(user.get().getUid()).expiryDate(LocalDateTime.now().plus(1, ChronoUnit.MINUTES)).token(UUID.randomUUID().toString()).build();
         return tokenService.generateToken(tokenRequest).message();
-    }
-
-    private Users convertToUserFromUserRequest(RegisterRequest userRequest) {
-        return Users.builder().uid(UUID.randomUUID().toString()).enabled(true)
-                .refreshTokens(new ArrayList<>()).roles(new HashSet<>())
-                .createdAt(LocalDateTime.now())
-                .username(userRequest.username()).email(userRequest.email())
-                .password(userRequest.password()).build();
-    }
-
-    private RegisterResponse convertToRegisterResponseFromUser(Users user) {
-        return RegisterResponse.builder().uid(user.getUid()).username(user.getUsername())
-                .email(user.getEmail()).createdAt(user.getCreatedAt()).build();
-    }
-
-    private UserResponse convertFromUserToUserResponse(Users user) {
-        return UserResponse.builder().uid(user.getUid()).username(user.getUsername()).email(user.getEmail())
-                .roles(user.getRoles().stream().map(Roles::getRoleName)
-                        .collect(Collectors.toSet())).createdAt(user.getCreatedAt()).build();
     }
 
 }

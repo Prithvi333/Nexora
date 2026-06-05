@@ -2,9 +2,7 @@ package com.nexora.auth.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -60,19 +58,7 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-
-//                        .requestMatchers(
-//                                HttpMethod.POST,
-//                                "/user"
-//                        ).permitAll()
-//
-//                        .requestMatchers(
-//                                "/user/login",
-//                                "/swagger-ui/**",
-//                                "/v3/api-docs/**",
-//                                "/swagger-ui.html"
-//                        ).permitAll()
-
+                        .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
 
@@ -82,7 +68,7 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-
+1
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();

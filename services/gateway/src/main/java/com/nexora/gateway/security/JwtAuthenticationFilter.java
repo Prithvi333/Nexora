@@ -2,6 +2,7 @@ package com.nexora.gateway.security;
 
 import com.nexora.gateway.utils.IConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -15,15 +16,16 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
 
-    private final AuthClient authClient;
+    @Autowired
+    private AuthClient authClient;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-
-        if (exchange.getRequest().getPath().equals(IConstants.LOGIN_URI)) {
-            chain.filter(exchange);
+        String path = exchange.getRequest().getPath().toString();
+        if (path.startsWith(IConstants.LOGIN_URI)) {
+            System.out.println("Running...");
+            return chain.filter(exchange);
         }
-
 
         String token = exchange.getRequest()
                 .getHeaders()
