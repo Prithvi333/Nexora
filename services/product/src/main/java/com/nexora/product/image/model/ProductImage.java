@@ -32,7 +32,7 @@ public class ProductImage {
     private String url;
 
     @Column(nullable = false)
-    private boolean primaryImage;
+    private Boolean primaryImage;
 
     @NotNull(message = "Product variant is required")
     @ManyToOne(fetch = FetchType.LAZY)

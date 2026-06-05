@@ -14,12 +14,12 @@ spring:
             - Path=/api/auth/**
 
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: lb://user
           predicates:
             - Path=/api/users/**
 
         - id: product-service
-          uri: lb://PRODUCT-SERVICE
+          uri: lb://product
           predicates:
             - Path=/api/products/**
 

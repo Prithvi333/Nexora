@@ -28,18 +28,10 @@ public class TokenServiceImpl implements TokenService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private JwtService jwtService;
-
     @Override
     public SuccessResponse generateToken(CreateRefreshTokenRequest tokenRequest) {
         RefreshTokens refreshToken = tokenRepository.save(convertFromTokenRequestToToken(tokenRequest));
         return new SuccessResponse(refreshToken.getToken(), HttpStatus.OK.value(), LocalDateTime.now());
-    }
-
-    @Override
-    public TokenValidationResponse validateToken(String token) {
-        return jwtService.validateToken(token);
     }
 
     @Override
