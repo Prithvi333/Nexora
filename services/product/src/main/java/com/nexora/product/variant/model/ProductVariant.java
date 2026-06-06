@@ -38,10 +38,10 @@ public class ProductVariant {
 
     @DecimalMin(value = "0.0")
     @Column(nullable = false)
-    private double price;
+    private Double price;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 

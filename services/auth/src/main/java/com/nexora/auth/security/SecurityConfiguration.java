@@ -58,9 +58,10 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/admin/**").hasRole(IRole.ROLE_ADMIN)
-                        .requestMatchers("/api/auth/user/**").hasAnyRole(IRole.ROLE_ADMIN, IRole.ROLE_USER)
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/api/auth/admin/**").hasRole(IRole.ROLE_ADMIN)
+//                        .requestMatchers("/api/auth/user/**").hasAnyRole(IRole.ROLE_ADMIN, IRole.ROLE_USER)
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
 
                 .csrf(AbstractHttpConfigurer::disable)

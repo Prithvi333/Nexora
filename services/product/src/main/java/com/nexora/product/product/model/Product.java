@@ -44,13 +44,13 @@ public class Product {
     private String brand;
 
     @Column(nullable = false)
-    private boolean active;
+    private Boolean active;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @NotNull(message = "Category is required")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 

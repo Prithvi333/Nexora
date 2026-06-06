@@ -30,13 +30,13 @@ public class RoleController {
     @DeleteMapping("{roleUid}")
     @Operation(summary = "Delete role", description = "Used to delete the role")
     ResponseEntity<SuccessResponse> deleteRole(@PathVariable("roleUid") String roleUid) {
-        return new ResponseEntity<>(roleService.deleteRole(roleUid), HttpStatus.OK);
+        return new ResponseEntity<>(roleService.deleteRole(roleUid), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping
     @Operation(summary = "Fetch roles", description = "User to get the role")
     ResponseEntity<List<RoleResponse>> getRoles(@RequestParam(required = false) String roleUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
-        if (roleUid != null) {
+        if (roleUid != null && !roleUid.isBlank()) {
             return new ResponseEntity<>(List.of(roleService.getRoleByUid(roleUid)), HttpStatus.OK);
         }
         return new ResponseEntity<>(roleService.getAllRoles(pageNo, pageSize, sortBy, direction), HttpStatus.OK);

@@ -38,13 +38,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenValidationResponse validateToken(String token) {
-        return jwtService.validateToken(token);
+    public List<RefreshTokenResponse> findByUserUid(String userUid) {
+        return tokenRepository.findByUserUid(userUid).stream().map(this::convertFromRefreshTokenToRefreshTokenResponse).toList();
     }
 
     @Override
-    public List<RefreshTokenResponse> findByUserUid(String userUid) {
-        return tokenRepository.findByUserUid(userUid).stream().map(this::convertFromRefreshTokenToRefreshTokenResponse).toList();
+    public TokenValidationResponse validateToken(String token) {
+        return jwtService.validateToken(token);
     }
 
     private RefreshTokens convertFromTokenRequestToToken(CreateRefreshTokenRequest tokenRequest) {

@@ -27,7 +27,7 @@ public class UserAdminController {
         return new ResponseEntity<>(userAdminService.getUserResponseByUserUid(userUid), HttpStatus.OK);
     }
 
-    @PostMapping
+    @GetMapping
     @Operation(summary = "Fetch all users", description = "use to fetch the all users")
     public ResponseEntity<List<UserResponse>> registerUser(@RequestParam(required = false) String roleUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
         return new ResponseEntity<>(userAdminService.getAllUsers(pageNo, pageSize, sortBy, direction), HttpStatus.OK);

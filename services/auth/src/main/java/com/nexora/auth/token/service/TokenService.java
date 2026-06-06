@@ -13,8 +13,6 @@ public interface TokenService {
 
     TokenValidationResponse validateToken(String token);
 
-//    SuccessResponse expireToken(String tokenUid);
-
     List<RefreshTokenResponse> findByUserUid(String userUid);
 
 

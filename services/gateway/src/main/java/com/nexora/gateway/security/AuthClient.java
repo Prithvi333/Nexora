@@ -16,7 +16,7 @@ public class AuthClient {
 
     public Mono<TokenValidationResponse> validate(String token) {
         return webClient.post()
-                .uri("http://localhost:8081/token")
+                .uri("http://localhost:8081/api/auth/admin/token")
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .retrieve()
                 .bodyToMono(TokenValidationResponse.class);

@@ -65,7 +65,7 @@ public class RoleServiceImpl implements RoleService {
     public SuccessResponse deleteRole(String roleUid) {
         Roles role = findRoleByUid(roleUid);
         roleRepository.delete(role);
-        return new SuccessResponse("Role with uid " + roleUid + " has been deleted successfully", HttpStatus.OK.value(), LocalDateTime.now());
+        return new SuccessResponse("Role with uid " + roleUid + " has been deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }
 
     @Override
