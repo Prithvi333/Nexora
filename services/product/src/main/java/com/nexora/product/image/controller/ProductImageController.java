@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(IUrls.ADMIN + IUrls.IMAGE)
@@ -19,9 +21,11 @@ public class ProductImageController {
     @Autowired
     private ProductImageService productImageService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Save product image", description = "Used to save the product image")
-    public ResponseEntity<ProductImageResponse> saveImage(@Valid @RequestBody ProductImageRequest productImageRequest) {
+    public ResponseEntity<ProductImageResponse> saveImage(
+            @Valid @ModelAttribute ProductImageRequest productImageRequest
+    ) {
         return new ResponseEntity<>(productImageService.saveImage(productImageRequest), HttpStatus.CREATED);
     }
 

@@ -38,12 +38,12 @@ public class GlobalUtility {
     public static CategoryResponse convertFromCategoryToCategoryResponse(Category category) {
 
         return CategoryResponse.builder().name(category.getName()).uid(category.getUid()).parentCategoryUid(category.getParentCategory() != null ? category.getParentCategory().getUid() : null)
-                .parentCategoryName(category.getParentCategory().getName() != null ? category.getParentCategory().getName() : null)
+                .parentCategoryName(category.getParentCategory() != null ? category.getParentCategory().getName() : null)
                 .productUids(category.getProducts().stream().map(Product::getUid).toList()).build();
     }
 
     public static Product.ProductBuilder convertFromProductRequestToProduct(ProductRequest productRequest) {
-        return Product.builder().uid(UUID.randomUUID().toString()).active(true).name(productRequest.name()).brand(productRequest.brand()).productVariants(new ArrayList<>())
+        return Product.builder().uid(UUID.randomUUID().toString()).active(productRequest.active()).name(productRequest.name()).brand(productRequest.brand()).productVariants(new ArrayList<>())
                 .description(productRequest.description()).createdAt(LocalDateTime.now());
     }
 
@@ -95,7 +95,7 @@ public class GlobalUtility {
 
     public static ProductImage.ProductImageBuilder convertFromProductImageRequestToProductImage(ProductImageRequest productImageRequest) {
         return ProductImage.builder().uid(UUID.randomUUID().toString())
-                .primaryImage(true);
+                .primaryImage(productImageRequest.primary());
 
 
     }

@@ -1,6 +1,7 @@
 package com.nexora.product.image.service;
 
 import com.nexora.product.S3.S3Service;
+import com.nexora.product.exception.image.ProductImageNotFound;
 import com.nexora.product.exception.variant.ProductVariantNotFound;
 import com.nexora.product.image.repository.ProductImageRepository;
 import com.nexora.product.image.model.ProductImage;
@@ -13,6 +14,7 @@ import com.nexora.product.variant.repository.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,18 +38,19 @@ public class ProductImageServiceImpl implements ProductImageService {
 
         ProductImage.ProductImageBuilder productImageBuilder = GlobalUtility.convertFromProductImageRequestToProductImage(productImageRequest);
         productImageBuilder.productVariant(productVariant);
-        productImageBuilder.url(s3Service.uploadImage(productImageRequest.multipartFile(), UUID.randomUUID().toString()));
+        productImageBuilder.url(s3Service.uploadImage(productImageRequest.file(), UUID.randomUUID().toString()));
         return GlobalUtility.convertFromProductImageToProductImageResponse(productImageRepository.save(productImageBuilder.build()));
     }
 
     @Override
     public SuccessResponse deleteImage(String productImageUid) {
 
-        ProductImage productImage = productImageRepository.findByUid(productImageUid).orElseThrow(() -> new ProductVariantNotFound(productImageUid));
+        ProductImage productImage = productImageRepository.findByUid(productImageUid).orElseThrow(() -> new ProductImageNotFound(productImageUid));
 
         String key = productImage.getUrl().substring(productImage.getUrl().lastIndexOf("/") + 1);
 
         s3Service.deleteImage(key);
+        productImageRepository.delete(productImage);
 
         return new SuccessResponse("Product Image has been deleted with uid " + productImageUid + "", HttpStatus.OK.value(), LocalDateTime.now());
     }

@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Long> {
     Optional<ProductVariant> findByUid(String variantUid);
+
+    boolean existsByColorAndSizeAndPrice(String color, String size, Double price);
 }

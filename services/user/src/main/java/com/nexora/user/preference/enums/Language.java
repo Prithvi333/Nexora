@@ -4,7 +4,7 @@ public enum Language {
 
     HINDI,
     ENGLISH,
-    OTHER;
+    FRENCH;
 
     public static boolean isExist(String lang) {
 

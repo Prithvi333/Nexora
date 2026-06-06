@@ -15,6 +15,7 @@ import com.nexora.user.request.preference.UpdateUserPreferenceRequest;
 import com.nexora.user.response.SuccessResponse;
 import com.nexora.user.response.preference.UserPreferenceResponse;
 import com.nexora.user.utility.GlobalUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,20 @@ public class PreferenceServiceImpl implements PreferenceService {
     private UserProfileRepository userProfileRepository;
 
     @Override
+    @Transactional
     public UserPreferenceResponse createUserPreference(CreateUserPreferenceRequest userPreferenceRequest) {
-        UserProfile userProfile = userProfileRepository.findByUid(userPreferenceRequest.userUid()).orElseThrow(() -> new UserProfileNotFound(userPreferenceRequest.userUid()));
+        if (userPreferenceRequest.language() != null && !Language.isExist(userPreferenceRequest.language().toUpperCase())) {
+            throw new LanguageNotFound("Language not found with name " + userPreferenceRequest.language() + "");
+        }
+        if (userPreferenceRequest.currency() != null && !CurrencyType.isExist(userPreferenceRequest.currency().toUpperCase())) {
+            throw new LanguageNotFound("Currency not found with name " + userPreferenceRequest.currency() + "");
+        }
+        UserProfile userProfile = userProfileRepository.findByUid(userPreferenceRequest.userProfileUid()).orElseThrow(() -> new UserProfileNotFound(userPreferenceRequest.userProfileUid()));
         UserPreference.UserPreferenceBuilder userPreferenceBuilder = GlobalUtils.convertFromUserPreferenceRequestToUserPreference(userPreferenceRequest);
         userPreferenceBuilder.userUid(userProfile.getUserUid());
-        return GlobalUtils.convertFromUserPreferenceToUserPreferenceResponse(userPreferenceRepository.save(userPreferenceBuilder.build()));
+        UserPreference toSaveUserPreference = userPreferenceBuilder.build();
+        userProfile.getPreferences().add(toSaveUserPreference);
+        return GlobalUtils.convertFromUserPreferenceToUserPreferenceResponse(toSaveUserPreference);
     }
 
     @Override
@@ -57,15 +67,17 @@ public class PreferenceServiceImpl implements PreferenceService {
             userPreference.setEmailNotifications(updateUserPreferenceRequest.emailNotifications());
         }
         if (updateUserPreferenceRequest.language() != null) {
-            if (!Language.isExist(updateUserPreferenceRequest.language())) {
+            if (!Language.isExist(updateUserPreferenceRequest.language().toUpperCase())) {
                 throw new LanguageNotFound(updateUserPreferenceRequest.language());
             }
+            userPreference.setLanguage(Language.valueOf(updateUserPreferenceRequest.language().toUpperCase()));
         }
 
         if (updateUserPreferenceRequest.currency() != null) {
-            if (!CurrencyType.isExist(updateUserPreferenceRequest.currency())) {
+            if (!CurrencyType.isExist(updateUserPreferenceRequest.currency().toUpperCase())) {
                 throw new CurrencyNotFound(updateUserPreferenceRequest.currency());
             }
+            userPreference.setCurrency(CurrencyType.valueOf(updateUserPreferenceRequest.currency().toUpperCase()));
         }
         userPreferenceRepository.save(userPreference);
 

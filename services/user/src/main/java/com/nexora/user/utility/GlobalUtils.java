@@ -1,6 +1,8 @@
 package com.nexora.user.utility;
 
 import com.nexora.user.address.model.Address;
+import com.nexora.user.preference.enums.CurrencyType;
+import com.nexora.user.preference.enums.Language;
 import com.nexora.user.preference.model.UserPreference;
 import com.nexora.user.profile.model.UserProfile;
 import com.nexora.user.request.address.CreateAddressRequest;
@@ -12,6 +14,8 @@ import com.nexora.user.response.user.UserProfileResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.ArrayList;
 
 public class GlobalUtils {
 
@@ -39,12 +43,13 @@ public class GlobalUtils {
                 .profileImageUrl(userProfile.getProfileImageUrl())
                 .bio(userProfile.getBio())
                 .phoneNumber(userProfile.getPhoneNumber())
-                .preferences(userProfile.getPreferences().stream().map(GlobalUtils::convertFromUserPreferenceToUserPreferenceResponse).toList())
-                .addresses(userProfile.getAddresses().stream().map(GlobalUtils::convertFromAddressToAddressResponse).toList())
+                .preferences(userProfile.getPreferences() != null ? userProfile.getPreferences().stream().map(GlobalUtils::convertFromUserPreferenceToUserPreferenceResponse).toList() : null)
+                .addresses(userProfile.getAddresses() != null ? userProfile.getAddresses().stream().map(GlobalUtils::convertFromAddressToAddressResponse).toList() : null)
                 .build();
     }
 
     public static UserPreferenceResponse convertFromUserPreferenceToUserPreferenceResponse(UserPreference userPreference) {
+
         return UserPreferenceResponse.builder()
                 .userPreferenceUid(userPreference.getUid())
                 .currency(userPreference.getCurrency())
@@ -56,8 +61,8 @@ public class GlobalUtils {
     }
 
     public static UserPreference.UserPreferenceBuilder convertFromUserPreferenceRequestToUserPreference(CreateUserPreferenceRequest userPreferenceRequest) {
-        return UserPreference.builder().currency(userPreferenceRequest.currency())
-                .language(userPreferenceRequest.language())
+        return UserPreference.builder().currency(CurrencyType.valueOf(userPreferenceRequest.currency().toUpperCase()))
+                .language(Language.valueOf(userPreferenceRequest.language().toUpperCase()))
                 .smsNotifications(userPreferenceRequest.smsNotifications())
                 .pushNotifications(userPreferenceRequest.pushNotifications())
                 .emailNotifications(userPreferenceRequest.emailNotifications());
@@ -76,6 +81,7 @@ public class GlobalUtils {
     }
 
     public static AddressResponse convertFromAddressToAddressResponse(Address address) {
+
         return AddressResponse.builder()
                 .uid(address.getUid())
                 .addressLine(address.getAddressLine())

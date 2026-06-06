@@ -8,9 +8,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record ProductVariantRequest(
         @NotBlank
-        String uid,
-
-        @NotBlank
         String color,
 
         @NotBlank

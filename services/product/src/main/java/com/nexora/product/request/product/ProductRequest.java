@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public record ProductRequest(
 
-        @NotBlank(message = "Product uid is required")
-        @Size(max = 50)
-        String uid,
-
         @NotBlank(message = "Product name is required")
         @Size(min = 2, max = 255)
         String name,
@@ -21,7 +17,7 @@ public record ProductRequest(
         @Size(max = 100)
         String brand,
 
-        boolean active,
+        Boolean active,
 
         @NotNull(message = "Category uid is required")
         String categoryUid

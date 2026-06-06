@@ -8,6 +8,7 @@ import com.nexora.product.response.variant.ProductVariantResponse;
 import com.nexora.product.utility.GlobalUtility;
 import com.nexora.product.variant.model.ProductVariant;
 import com.nexora.product.variant.repository.ProductVariantRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ public class UserProductVariantServiceImpl implements UserProductVariantService 
     private ProductVariantRepository productVariantRepository;
 
     @Override
+    @Transactional
     public List<ProductVariantResponse> getProductVariant(String productVariantUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
 
         if (productVariantUid != null && !productVariantUid.isBlank()) {

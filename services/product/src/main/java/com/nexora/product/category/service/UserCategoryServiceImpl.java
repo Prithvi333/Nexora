@@ -6,6 +6,7 @@ import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
 import com.nexora.product.response.category.CategoryResponse;
 import com.nexora.product.utility.GlobalUtility;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public class UserCategoryServiceImpl implements UserCategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public List<CategoryResponse> fetchCategory(String categoryUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
 
         if (categoryUid != null && !categoryUid.isBlank()) {

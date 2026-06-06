@@ -3,11 +3,15 @@ package com.nexora.product.exception;
 import com.nexora.product.exception.S3.S3Exception;
 import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
+import com.nexora.product.exception.category.SameCategoryException;
 import com.nexora.product.exception.image.ProductImageNotFound;
 import com.nexora.product.exception.inventory.InventoryNotFound;
+import com.nexora.product.exception.inventory.ReservedQuantityGreaterThanActualQuantity;
+import com.nexora.product.exception.product.AlreadyAssociatedProduct;
 import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.product.ProductNotFound;
 import com.nexora.product.exception.variant.EmptyProductVariantList;
+import com.nexora.product.exception.variant.ProductVariantAlreadyAssociated;
 import com.nexora.product.exception.variant.ProductVariantNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +73,25 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(productImageNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(SameCategoryException.class)
+    public ResponseEntity<ErrorResponse> handleSameCategoryException(SameCategoryException sameCategoryException) {
+        return new ResponseEntity<>(new ErrorResponse(sameCategoryException.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlreadyAssociatedProduct.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyAssociatedProduct(AlreadyAssociatedProduct alreadyAssociatedProduct) {
+        return new ResponseEntity<>(new ErrorResponse(alreadyAssociatedProduct.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProductVariantAlreadyAssociated.class)
+    public ResponseEntity<ErrorResponse> handleProductVariantAlreadyAssociated(ProductVariantAlreadyAssociated productVariantAlreadyAssociated) {
+        return new ResponseEntity<>(new ErrorResponse(productVariantAlreadyAssociated.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReservedQuantityGreaterThanActualQuantity.class)
+    public ResponseEntity<ErrorResponse> handleQuantityException(ReservedQuantityGreaterThanActualQuantity reservedQuantityGreaterThanActualQuantity) {
+        return new ResponseEntity<>(new ErrorResponse(reservedQuantityGreaterThanActualQuantity.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(

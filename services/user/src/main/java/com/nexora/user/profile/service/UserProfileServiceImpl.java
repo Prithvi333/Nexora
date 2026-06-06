@@ -8,11 +8,14 @@ import com.nexora.user.request.user.UserCreationRequest;
 import com.nexora.user.response.SuccessResponse;
 import com.nexora.user.response.user.UserProfileResponse;
 import com.nexora.user.utility.GlobalUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
@@ -21,6 +24,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private UserProfileRepository userProfileRepository;
 
     @Override
+    @Transactional
     public UserProfileResponse createUserProfile(UserCreationRequest userCreationRequest) {
         UserProfile userProfile = GlobalUtils.convertFromUserProfileRequestToUserProfile(userCreationRequest);
         return GlobalUtils.convertFromUserProfileToUserProfileResponse(userProfileRepository.save(userProfile));
@@ -29,21 +33,23 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public SuccessResponse<String> updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest) {
         UserProfile userProfile = getUserProfile(updateUserProfileRequest.userProfileUid());
-        if (!updateUserProfileRequest.bio().isBlank()) {
+        if (updateUserProfileRequest.bio() != null && !updateUserProfileRequest.bio().isBlank()) {
             userProfile.setBio(updateUserProfileRequest.bio());
         }
-        if (!updateUserProfileRequest.profileImageUrl().isBlank()) {
+        if (updateUserProfileRequest.profileImageUrl() != null &&!updateUserProfileRequest.profileImageUrl().isBlank()) {
             userProfile.setProfileImageUrl(userProfile.getProfileImageUrl());
         }
-        if (!updateUserProfileRequest.firstName().isBlank()) {
+        if (updateUserProfileRequest.firstName() != null &&!updateUserProfileRequest.firstName().isBlank()) {
             userProfile.setFirstName(updateUserProfileRequest.firstName());
         }
-        if (!updateUserProfileRequest.lastName().isBlank()) {
+        if (updateUserProfileRequest.lastName() != null &&!updateUserProfileRequest.lastName().isBlank()) {
             userProfile.setLastName(updateUserProfileRequest.lastName());
         }
         if (updateUserProfileRequest.phoneNumber() != null) {
             userProfile.setPhoneNumber(updateUserProfileRequest.phoneNumber());
         }
+
+        userProfileRepository.save(userProfile);
 
         return new SuccessResponse<>("User profile has been updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
 
@@ -51,6 +57,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    @Transactional
     public UserProfileResponse fetchUserProfile(String userProfileUid) {
         UserProfile userProfile = getUserProfile(userProfileUid);
         return GlobalUtils.convertFromUserProfileToUserProfileResponse(userProfile);

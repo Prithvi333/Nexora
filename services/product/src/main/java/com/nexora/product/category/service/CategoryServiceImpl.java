@@ -4,6 +4,7 @@ import com.nexora.product.category.model.Category;
 import com.nexora.product.category.repository.CategoryRepository;
 import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
+import com.nexora.product.exception.category.SameCategoryException;
 import com.nexora.product.request.category.CreateCategoryRequest;
 import com.nexora.product.request.category.UpdateCategoryRequest;
 import com.nexora.product.response.SuccessResponse;
@@ -41,11 +42,14 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = optionalCategory.orElseThrow(() -> new CategoryNotFound(updateCategoryRequest.categoryUid()));
 
-        if (category.getName() != null && !category.getName().isBlank() && !category.getName().equals(updateCategoryRequest.name())) {
+        if (updateCategoryRequest.name() != null && !updateCategoryRequest.name().isBlank() && !category.getName().equals(updateCategoryRequest.name())) {
             category.setName(updateCategoryRequest.name());
         }
         if (updateCategoryRequest.parentCategoryUid() != null && !updateCategoryRequest.parentCategoryUid().isBlank()) {
-            Category parentCategory = optionalCategory.orElseThrow(() -> new CategoryNotFound(updateCategoryRequest.categoryUid()));
+            if (updateCategoryRequest.categoryUid().equals(updateCategoryRequest.parentCategoryUid())) {
+                throw new SameCategoryException();
+            }
+            Category parentCategory = categoryRepository.findByUid(updateCategoryRequest.parentCategoryUid()).orElseThrow(() -> new CategoryNotFound(updateCategoryRequest.parentCategoryUid()));
             category.setParentCategory(parentCategory);
         }
         categoryRepository.save(category);

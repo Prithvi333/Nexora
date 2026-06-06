@@ -3,6 +3,7 @@ package com.nexora.product.product.service;
 import com.nexora.product.category.model.Category;
 import com.nexora.product.category.repository.CategoryRepository;
 import com.nexora.product.exception.category.CategoryNotFound;
+import com.nexora.product.exception.product.AlreadyAssociatedProduct;
 import com.nexora.product.exception.product.ProductNotFound;
 import com.nexora.product.product.model.Product;
 import com.nexora.product.product.repository.ProductRepository;
@@ -12,11 +13,13 @@ import com.nexora.product.response.SuccessResponse;
 import com.nexora.product.response.product.ProductResponse;
 import com.nexora.product.response.variant.ProductVariantResponse;
 import com.nexora.product.utility.GlobalUtility;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -27,11 +30,17 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product.ProductBuilder productBuilder = GlobalUtility.convertFromProductRequestToProduct(productRequest);
         Category category = categoryRepository.findByUid(productRequest.categoryUid()).orElseThrow(() -> new CategoryNotFound(productRequest.categoryUid()));
+        if (productRepository.existsByNameAndBrandAndCategory_Uid(productRequest.name(), productRequest.brand(), category.getUid())) {
+            throw new AlreadyAssociatedProduct(productRequest.name(), productRequest.brand(), category.getName());
+        }
         productBuilder.category(category);
-        return GlobalUtility.convertFromProductToProductResponse(productRepository.save(productBuilder.build()));
+        Product product = productRepository.save(productBuilder.build());
+        category.getProducts().add(product);
+        return GlobalUtility.convertFromProductToProductResponse(product);
     }
 
 

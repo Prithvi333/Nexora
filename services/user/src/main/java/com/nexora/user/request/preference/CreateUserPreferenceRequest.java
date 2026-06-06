@@ -7,13 +7,13 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateUserPreferenceRequest(
         @NotBlank
-        String userUid,
+        String userProfileUid,
 
         @NotNull
-        Language language,
+        String language,
 
         @NotNull
-        CurrencyType currency,
+        String currency,
 
         Boolean emailNotifications,
 
