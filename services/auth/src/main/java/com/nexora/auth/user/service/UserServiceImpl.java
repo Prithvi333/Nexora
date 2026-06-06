@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
         if (user.isEmpty()) {
             throw new UserNotFound("User not found with username " + user + "");
         }
-        CreateRefreshTokenRequest tokenRequest = CreateRefreshTokenRequest.builder().userUid(user.get().getUid()).expiryDate(LocalDateTime.now().plus(1, ChronoUnit.MINUTES)).token(UUID.randomUUID().toString()).build();
+        CreateRefreshTokenRequest tokenRequest = CreateRefreshTokenRequest.builder().userUid(user.get().getUid()).expiryDate(LocalDateTime.now().plus(2, ChronoUnit.HOURS)).token(UUID.randomUUID().toString()).build();
         return tokenService.generateToken(tokenRequest).message();
     }
 

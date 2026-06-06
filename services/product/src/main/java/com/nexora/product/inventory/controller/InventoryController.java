@@ -4,6 +4,7 @@ import com.nexora.product.inventory.service.InventoryService;
 import com.nexora.product.request.inventory.InventoryUpdateRequest;
 import com.nexora.product.response.SuccessResponse;
 import com.nexora.product.utility.constants.IUrls;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @PutMapping
+    @Operation(summary = "Update inventory",description = "Used to update the inventory")
     public ResponseEntity<SuccessResponse> updateInventory(@Valid @RequestBody InventoryUpdateRequest inventoryUpdateRequest) {
         return new ResponseEntity<>(inventoryService.updateInventory(inventoryUpdateRequest), HttpStatus.OK);
     }

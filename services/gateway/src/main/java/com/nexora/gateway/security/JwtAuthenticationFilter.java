@@ -22,7 +22,9 @@ public class JwtAuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
+        System.out.println(path);
         if (IConstants.allowedUrls.contains(path)) {
+            System.out.println("Running.");
             return chain.filter(exchange);
         }
 

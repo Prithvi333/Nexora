@@ -95,8 +95,7 @@ public class GlobalUtility {
 
     public static ProductImage.ProductImageBuilder convertFromProductImageRequestToProductImage(ProductImageRequest productImageRequest) {
         return ProductImage.builder().uid(UUID.randomUUID().toString())
-                .primaryImage(false)
-                .url(productImageRequest.url());
+                .primaryImage(true);
 
 
     }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class UserCategoryServiceImpl implements UserCategoryService {
 
@@ -25,7 +26,7 @@ public class UserCategoryServiceImpl implements UserCategoryService {
             Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
             return List.of(GlobalUtility.convertFromCategoryToCategoryResponse(category));
         }
-        direction = direction == null || direction.isBlank() ? "name" : direction;
+        sortBy = sortBy == null || sortBy.isBlank() ? "name" : sortBy;
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
 
         Page<Category> page = categoryRepository.findAll(pageable);

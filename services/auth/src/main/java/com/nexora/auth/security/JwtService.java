@@ -44,7 +44,7 @@ public class JwtService {
                     .setSubject(username)
                     .claim("authority", convertAuthorityIntoSimpleForm(authorityList))
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 30))
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                     .signWith(key)
                     .compact();
             return Map.of("username", username, "accessToken", token);

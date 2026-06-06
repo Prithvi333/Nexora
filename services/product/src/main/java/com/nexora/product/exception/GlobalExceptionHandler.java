@@ -1,7 +1,9 @@
 package com.nexora.product.exception;
 
+import com.nexora.product.exception.S3.S3Exception;
 import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
+import com.nexora.product.exception.image.ProductImageNotFound;
 import com.nexora.product.exception.inventory.InventoryNotFound;
 import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.product.ProductNotFound;
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFound.class)
     public ResponseEntity<ErrorResponse> handleProductNotFound(ProductNotFound productNotFound) {
-        return new ResponseEntity<>(new ErrorResponse(productNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(productNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmptyProductList.class)
@@ -44,7 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductVariantNotFound.class)
     public ResponseEntity<ErrorResponse> handleProductVariantNotFound(ProductVariantNotFound productVariantNotFound) {
-        return new ResponseEntity<>(new ErrorResponse(productVariantNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(productVariantNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmptyProductVariantList.class)
@@ -54,8 +56,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InventoryNotFound.class)
     public ResponseEntity<ErrorResponse> handleInventoryNotFound(InventoryNotFound inventoryNotFound) {
-        return new ResponseEntity<>(new ErrorResponse(inventoryNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(inventoryNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ErrorResponse> handleS3Exception(S3Exception s3Exception) {
+        return new ResponseEntity<>(new ErrorResponse(s3Exception.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProductImageNotFound.class)
+    public ResponseEntity<ErrorResponse> handleProductImageNotFound(ProductImageNotFound productImageNotFound) {
+        return new ResponseEntity<>(new ErrorResponse(productImageNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(

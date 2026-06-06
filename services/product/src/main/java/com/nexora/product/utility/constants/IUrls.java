@@ -7,5 +7,6 @@ public interface IUrls {
     String PRODUCT = "/product";
     String VARIANT = "/variant";
     String INVENTORY = "/inventory";
+    String IMAGE = "/image";
     String USER = "/api/products/user";
 }
