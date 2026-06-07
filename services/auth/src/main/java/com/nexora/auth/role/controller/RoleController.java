@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(IUrls.ROLE)
+@RequestMapping(IUrls.ADMIN + IUrls.ROLE)
 public class RoleController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class RoleController {
     }
 
 
-    @PostMapping(IUrls.UPDATE_USER_ROLE)
+    @PutMapping
     @Operation(summary = "Update User Role", description = "User to allocate or deallocate the role")
     ResponseEntity<SuccessResponse> updateUserRole(@RequestParam String userUid, @RequestParam String roleUid, @RequestParam Boolean assign) {
         return new ResponseEntity<>(roleService.updateRole(userUid, roleUid, assign), HttpStatus.OK);

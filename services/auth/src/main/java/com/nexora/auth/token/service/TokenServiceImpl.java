@@ -43,7 +43,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenValidationResponse validateToken(String token) {
+    public RefreshTokenResponse validateToken(String token) {
         return jwtService.validateToken(token);
     }
 

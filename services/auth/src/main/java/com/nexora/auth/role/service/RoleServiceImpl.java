@@ -8,7 +8,7 @@ import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.request.role.CreateRoleRequest;
 import com.nexora.auth.request.role.RoleResponse;
 import com.nexora.auth.response.SuccessResponse;
-import com.nexora.auth.role.IRoleNames;
+import com.nexora.auth.role.enums.IRoleNames;
 import com.nexora.auth.role.model.Roles;
 import com.nexora.auth.role.repository.RoleRepository;
 import com.nexora.auth.user.model.Users;

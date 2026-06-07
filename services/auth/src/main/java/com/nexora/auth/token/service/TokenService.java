@@ -11,7 +11,7 @@ public interface TokenService {
 
     SuccessResponse generateToken(CreateRefreshTokenRequest tokenRequest);
 
-    TokenValidationResponse validateToken(String token);
+    RefreshTokenResponse validateToken(String token);
 
     List<RefreshTokenResponse> findByUserUid(String userUid);
 

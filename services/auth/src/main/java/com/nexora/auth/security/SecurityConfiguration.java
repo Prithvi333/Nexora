@@ -1,6 +1,7 @@
 package com.nexora.auth.security;
 
 import com.nexora.auth.utils.contants.IRole;
+import com.nexora.auth.utils.contants.IUrls;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -58,11 +60,11 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/admin/**").hasRole(IRole.ROLE_ADMIN)
-//                        .requestMatchers("/api/auth/user/**").hasAnyRole(IRole.ROLE_ADMIN, IRole.ROLE_USER)
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
-                )
+                        .requestMatchers(IUrls.USER + "/login", IUrls.USER + "/signup", IUrls.USER + "/token").permitAll()
+                        .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)
+                        .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRole.ROLE_ADMIN, IRole.ROLE_USER)
+                        .anyRequest().authenticated()
+                ).addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
