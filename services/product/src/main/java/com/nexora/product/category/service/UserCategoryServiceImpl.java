@@ -4,6 +4,7 @@ import com.nexora.product.category.model.Category;
 import com.nexora.product.category.repository.CategoryRepository;
 import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
+import com.nexora.product.redis.RedisCacheService;
 import com.nexora.product.response.category.CategoryResponse;
 import com.nexora.product.utility.GlobalUtility;
 import jakarta.transaction.Transactional;
@@ -18,13 +19,18 @@ import java.util.List;
 public class UserCategoryServiceImpl implements UserCategoryService {
 
     @Autowired
+    private RedisCacheService redisCacheService;
+
+    @Autowired
     private CategoryRepository categoryRepository;
 
     @Override
     @Transactional
     public List<CategoryResponse> fetchCategory(String categoryUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
-
         if (categoryUid != null && !categoryUid.isBlank()) {
+            if (redisCacheService.isHasKeyExists(Category.class.getSimpleName(), categoryUid)) {
+                return List.of(redisCacheService.get(Category.class.getSimpleName(), categoryUid, CategoryResponse.class));
+            }
             Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
             return List.of(GlobalUtility.convertFromCategoryToCategoryResponse(category));
         }

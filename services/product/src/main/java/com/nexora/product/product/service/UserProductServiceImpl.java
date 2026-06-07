@@ -4,6 +4,7 @@ import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.product.ProductNotFound;
 import com.nexora.product.product.model.Product;
 import com.nexora.product.product.repository.ProductRepository;
+import com.nexora.product.redis.RedisCacheService;
 import com.nexora.product.response.product.ProductResponse;
 import com.nexora.product.utility.GlobalUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,18 @@ public class UserProductServiceImpl implements UserProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private RedisCacheService redisCacheService;
+
     @Override
     public List<ProductResponse> getProducts(String productUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
 
         if (productUid != null && !productUid.isBlank()) {
+
+            if(redisCacheService.isHasKeyExists(Product.class.getSimpleName(),productUid)){
+                return List.of(redisCacheService.get(Product.class.getSimpleName(),productUid,ProductResponse.class));
+            }
+
             Product product = productRepository.findByUid(productUid).orElseThrow(() -> new ProductNotFound(productUid));
             return List.of(GlobalUtility.convertFromProductToProductResponse(product));
         }
