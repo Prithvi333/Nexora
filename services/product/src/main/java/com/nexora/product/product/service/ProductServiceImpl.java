@@ -7,6 +7,7 @@ import com.nexora.product.exception.product.AlreadyAssociatedProduct;
 import com.nexora.product.exception.product.ProductNotFound;
 import com.nexora.product.product.model.Product;
 import com.nexora.product.product.repository.ProductRepository;
+import com.nexora.product.redis.RedisCacheService;
 import com.nexora.product.request.product.ProductRequest;
 import com.nexora.product.request.product.ProductUpdateRequest;
 import com.nexora.product.response.SuccessResponse;
@@ -15,6 +16,7 @@ import com.nexora.product.response.variant.ProductVariantResponse;
 import com.nexora.product.utility.GlobalUtility;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private RedisCacheService redisCacheService;
+
     @Override
     @Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
@@ -40,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
         productBuilder.category(category);
         Product product = productRepository.save(productBuilder.build());
         category.getProducts().add(product);
+        redisCacheService.put(Product.class.getSimpleName(),product.getUid(),product);
         return GlobalUtility.convertFromProductToProductResponse(product);
     }
 
@@ -64,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
             product.setDescription(productUpdateRequest.description());
         }
 
-        productRepository.save(product);
+        redisCacheService.put(Product.class.getSimpleName(),product.getUid(),productRepository.save(product));
 
         return new SuccessResponse("Product updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
 
@@ -75,6 +81,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = isProductExist(productUid);
         productRepository.delete(product);
+        redisCacheService.delete(Product.class.getSimpleName(),productUid);
         return new SuccessResponse("Product deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }
 

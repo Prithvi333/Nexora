@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UserProductVariantService {
     List<ProductVariantResponse> getProductVariant(String productVariantUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
+
+    void validateQuantity(String variantUid, Integer quantity);
 }

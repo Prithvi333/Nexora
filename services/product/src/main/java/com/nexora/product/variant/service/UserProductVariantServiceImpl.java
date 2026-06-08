@@ -1,5 +1,6 @@
 package com.nexora.product.variant.service;
 
+import com.nexora.product.exception.inventory.OrderQuantityGreaterThanActualQuantity;
 import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.variant.EmptyProductVariantList;
 import com.nexora.product.exception.variant.ProductVariantNotFound;
@@ -9,6 +10,7 @@ import com.nexora.product.utility.GlobalUtility;
 import com.nexora.product.variant.model.ProductVariant;
 import com.nexora.product.variant.repository.ProductVariantRepository;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Variant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,5 +41,13 @@ public class UserProductVariantServiceImpl implements UserProductVariantService 
         }
         return page.getContent().stream().map(GlobalUtility::convertFromProductVariantToProductVariantResponse).toList();
 
+    }
+
+    @Override
+    public void validateQuantity(String variantUid, Integer quantity) {
+        ProductVariant productVariant = productVariantRepository.findByUid(variantUid).orElseThrow(() -> new ProductVariantNotFound(variantUid));
+        if (quantity > productVariant.getInventory().getQuantity() - productVariant.getInventory().getReservedQuantity()) {
+            throw new OrderQuantityGreaterThanActualQuantity(quantity, productVariant.getInventory().getQuantity() - productVariant.getInventory().getReservedQuantity());
+        }
     }
 }

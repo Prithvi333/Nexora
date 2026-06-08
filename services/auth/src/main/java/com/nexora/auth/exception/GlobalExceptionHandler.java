@@ -5,6 +5,8 @@ import com.nexora.auth.exception.roles.RoleAlreadyAssociated;
 import com.nexora.auth.exception.roles.RoleAlreadyExist;
 import com.nexora.auth.exception.roles.RoleNotFound;
 import com.nexora.auth.exception.token.IncorrectUserNameOrPasswordException;
+import com.nexora.auth.exception.token.RefreshTokenExpired;
+import com.nexora.auth.exception.token.RefreshTokenNotFound;
 import com.nexora.auth.exception.token.TokenException;
 import com.nexora.auth.exception.users.EmptyUserList;
 import com.nexora.auth.exception.users.PasswordException;
@@ -76,6 +78,20 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(roleAlreadyExist.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(RefreshTokenNotFound.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenNotFound(RefreshTokenNotFound refreshTokenNotFound) {
+        ErrorResponse errorResponse = new ErrorResponse(refreshTokenNotFound.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(RefreshTokenExpired.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenExpired(RefreshTokenExpired refreshTokenExpired) {
+        ErrorResponse errorResponse = new ErrorResponse(refreshTokenExpired.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(

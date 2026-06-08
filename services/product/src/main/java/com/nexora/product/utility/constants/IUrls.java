@@ -9,4 +9,6 @@ public interface IUrls {
     String INVENTORY = "/inventory";
     String IMAGE = "/image";
     String USER = "/api/products/user";
+
+    String INTERNAL = "/internal";
 }

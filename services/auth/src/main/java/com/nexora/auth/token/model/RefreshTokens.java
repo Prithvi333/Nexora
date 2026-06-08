@@ -2,6 +2,8 @@ package com.nexora.auth.token.model;
 
 import com.nexora.auth.user.model.Users;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -22,8 +24,10 @@ public class RefreshTokens {
 
     private String uid;
 
+    @NotNull(message = "Refresh token can not be null")
     private String token;
 
+    @NotNull(message = "expiry date can not be null")
     private LocalDateTime expiryDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

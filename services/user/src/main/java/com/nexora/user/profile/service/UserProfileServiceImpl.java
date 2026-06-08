@@ -8,7 +8,6 @@ import com.nexora.user.request.user.UserCreationRequest;
 import com.nexora.user.response.SuccessResponse;
 import com.nexora.user.response.user.UserProfileResponse;
 import com.nexora.user.utility.GlobalUtils;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,13 +35,13 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (updateUserProfileRequest.bio() != null && !updateUserProfileRequest.bio().isBlank()) {
             userProfile.setBio(updateUserProfileRequest.bio());
         }
-        if (updateUserProfileRequest.profileImageUrl() != null &&!updateUserProfileRequest.profileImageUrl().isBlank()) {
+        if (updateUserProfileRequest.profileImageUrl() != null && !updateUserProfileRequest.profileImageUrl().isBlank()) {
             userProfile.setProfileImageUrl(userProfile.getProfileImageUrl());
         }
-        if (updateUserProfileRequest.firstName() != null &&!updateUserProfileRequest.firstName().isBlank()) {
+        if (updateUserProfileRequest.firstName() != null && !updateUserProfileRequest.firstName().isBlank()) {
             userProfile.setFirstName(updateUserProfileRequest.firstName());
         }
-        if (updateUserProfileRequest.lastName() != null &&!updateUserProfileRequest.lastName().isBlank()) {
+        if (updateUserProfileRequest.lastName() != null && !updateUserProfileRequest.lastName().isBlank()) {
             userProfile.setLastName(updateUserProfileRequest.lastName());
         }
         if (updateUserProfileRequest.phoneNumber() != null) {
@@ -61,6 +60,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     public UserProfileResponse fetchUserProfile(String userProfileUid) {
         UserProfile userProfile = getUserProfile(userProfileUid);
         return GlobalUtils.convertFromUserProfileToUserProfileResponse(userProfile);
+    }
+
+    @Override
+    public void isProfileExists(String userProfileUid) {
+        boolean isExist = userProfileRepository.existsByUid(userProfileUid);
+        if (!isExist) {
+            throw new UserProfileNotFound(userProfileUid);
+        }
     }
 
     private UserProfile getUserProfile(String userProfileUid) {

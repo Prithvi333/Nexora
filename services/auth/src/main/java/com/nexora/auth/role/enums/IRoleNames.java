@@ -1,4 +1,4 @@
-package com.nexora.auth.role;
+package com.nexora.auth.role.enums;
 
 public enum IRoleNames {
     ADMIN, USER,CUSTOMER;

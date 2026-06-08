@@ -6,10 +6,12 @@ import com.nexora.product.exception.category.EmptyCategoryList;
 import com.nexora.product.exception.category.SameCategoryException;
 import com.nexora.product.exception.image.ProductImageNotFound;
 import com.nexora.product.exception.inventory.InventoryNotFound;
+import com.nexora.product.exception.inventory.OrderQuantityGreaterThanActualQuantity;
 import com.nexora.product.exception.inventory.ReservedQuantityGreaterThanActualQuantity;
 import com.nexora.product.exception.product.AlreadyAssociatedProduct;
 import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.product.ProductNotFound;
+import com.nexora.product.exception.product.ProductOrVariantNotFound;
 import com.nexora.product.exception.variant.EmptyProductVariantList;
 import com.nexora.product.exception.variant.ProductVariantAlreadyAssociated;
 import com.nexora.product.exception.variant.ProductVariantNotFound;
@@ -91,6 +93,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReservedQuantityGreaterThanActualQuantity.class)
     public ResponseEntity<ErrorResponse> handleQuantityException(ReservedQuantityGreaterThanActualQuantity reservedQuantityGreaterThanActualQuantity) {
         return new ResponseEntity<>(new ErrorResponse(reservedQuantityGreaterThanActualQuantity.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProductOrVariantNotFound.class)
+    public ResponseEntity<ErrorResponse> handleProductOrVariantNotFound(ProductOrVariantNotFound productOrVariantNotFound) {
+        return new ResponseEntity<>(new ErrorResponse(productOrVariantNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(OrderQuantityGreaterThanActualQuantity.class)
+    public ResponseEntity<ErrorResponse> handleQuantityMismatch(OrderQuantityGreaterThanActualQuantity orderQuantityGreaterThanActualQuantity) {
+        return new ResponseEntity<>(new ErrorResponse(orderQuantityGreaterThanActualQuantity.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

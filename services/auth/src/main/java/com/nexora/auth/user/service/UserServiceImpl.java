@@ -2,7 +2,6 @@ package com.nexora.auth.user.service;
 
 import com.nexora.auth.exception.token.IncorrectUserNameOrPasswordException;
 import com.nexora.auth.exception.token.TokenException;
-import com.nexora.auth.exception.users.EmptyUserList;
 import com.nexora.auth.exception.users.PasswordException;
 import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.request.token.CreateRefreshTokenRequest;
@@ -12,27 +11,26 @@ import com.nexora.auth.request.user.UpdateUserRequest;
 import com.nexora.auth.response.SuccessResponse;
 import com.nexora.auth.response.token.TokenResponse;
 import com.nexora.auth.response.user.RegisterResponse;
-import com.nexora.auth.response.user.UserResponse;
 import com.nexora.auth.role.model.Roles;
+import com.nexora.auth.role.repository.RoleRepository;
 import com.nexora.auth.security.JwtService;
-import com.nexora.auth.security.SecurityConfiguration;
 import com.nexora.auth.token.model.RefreshTokens;
 import com.nexora.auth.token.repository.TokenRepository;
 import com.nexora.auth.token.service.TokenService;
 import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
 import com.nexora.auth.utils.GlobalUtility;
+import com.nexora.auth.utils.contants.IRole;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -56,13 +54,29 @@ public class UserServiceImpl implements UserService {
     private TokenRepository tokenRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
     public RegisterResponse registerUser(RegisterRequest registerRequest) {
         Users user = GlobalUtility.convertToUserFromUserRequest(registerRequest);
         user.setPassword(passwordEncoder.encode(registerRequest.password()));
+        user.setRoles(Set.of(fetchDefaultRole()));
         return GlobalUtility.convertToRegisterResponseFromUser(userRepository.save(user));
+    }
+
+    private Roles fetchDefaultRole() {
+        try {
+            return roleRepository
+                    .findByRoleName("ROLE_" + IRole.ROLE_USER)
+                    .orElseThrow(() ->
+                            new RoleNotFoundException("User role not found"));
+
+        } catch (RoleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -106,17 +120,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenResponse userLogin(LoginRequest loginRequest) {
         Authentication authentication;
+        Users user = userRepository.findByEmail(loginRequest.email()).orElseThrow(UserNotFound::new);
         try {
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
         } catch (Exception ex) {
             throw new IncorrectUserNameOrPasswordException();
         }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        Map<String, Object> tokenMap = jwtService.generateToken(authentication);
+        Map<String, Object> tokenMap = jwtService.generateToken(user);
         String userName = tokenMap.get("username").toString();
-        Optional<Users> user = userRepository.findByEmail(userName);
-        boolean isEmptyRefreshToken = user.get().getRefreshTokens().isEmpty();
-        boolean isRefreshTokenExpired = user.get().getRefreshTokens().stream().noneMatch(token -> (token.getExpiryDate().isAfter(LocalDateTime.now()) || (token.getExpiryDate().isEqual(LocalDateTime.now()))));
+        boolean isEmptyRefreshToken = user.getRefreshTokens().isEmpty();
+        boolean isRefreshTokenExpired = user.getRefreshTokens().stream().noneMatch(token -> (token.getExpiryDate().isAfter(LocalDateTime.now()) || (token.getExpiryDate().isEqual(LocalDateTime.now()))));
         String refreshToken = "";
         if (isEmptyRefreshToken || isRefreshTokenExpired) {
             refreshToken = generateRefreshToken(userName);
