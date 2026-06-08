@@ -1,6 +1,6 @@
 package com.nexora.orders.orderItems.model;
 
-import com.nexora.orders.order.model.Order;
+import com.nexora.orders.order.model.Orders;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +23,10 @@ public class OrderItem {
     private String uid = UUID.randomUUID().toString();
 
     @Column(nullable = false)
-    private Long productId;
+    private String productUid;
+
+    @Column(nullable = false)
+    private String variantUid;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -33,5 +36,5 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders order;
 }

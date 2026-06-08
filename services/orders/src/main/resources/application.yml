@@ -1,10 +1,6 @@
 server:
   port: 8084
 
-spring:
-  application:
-    name: orders
-
 eureka:
   client:
     service-url:

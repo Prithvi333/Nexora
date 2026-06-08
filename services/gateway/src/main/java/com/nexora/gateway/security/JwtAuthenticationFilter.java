@@ -47,8 +47,9 @@ public class JwtAuthenticationFilter implements WebFilter {
 
         try {
             Claims claims = jwtValidationService.validateToken(token);
+            String userUid = (String) claims.get("userUid");
             String username = (String) claims.get("username");
-            Set<String> roles = claims.get("authorities", Set.class);
+            String roles = (String) claims.get("authorities");
 
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()

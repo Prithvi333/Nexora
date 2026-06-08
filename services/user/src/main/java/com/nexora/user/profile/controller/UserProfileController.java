@@ -27,7 +27,7 @@ public class UserProfileController {
 
     @PutMapping
     @Operation(summary = "Update profile", description = "Used to update the user profile")
-    public ResponseEntity<SuccessResponse<String>> updateUserProfile(@Valid  UpdateUserProfileRequest updateUserProfileRequest) {
+    public ResponseEntity<SuccessResponse<String>> updateUserProfile(@Valid UpdateUserProfileRequest updateUserProfileRequest) {
         return new ResponseEntity<>(userProfileService.updateUserProfile(updateUserProfileRequest), HttpStatus.OK);
     }
 
@@ -36,5 +36,6 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> fetchUserProfile(@RequestParam("userProfileUid") String userProfileUid) {
         return new ResponseEntity<>(userProfileService.fetchUserProfile(userProfileUid), HttpStatus.OK);
     }
+
 
 }

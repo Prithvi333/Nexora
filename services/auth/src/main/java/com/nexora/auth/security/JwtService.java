@@ -11,6 +11,7 @@ import com.nexora.auth.user.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ public class JwtService {
             user.getRoles().forEach(roles -> authorities.add(new SimpleGrantedAuthority(roles.getRoleName())));
 
             String token = Jwts.builder()
-                    .setSubject("Access-Token")
+                    .setSubject(user.getUid())
                     .claim("username", username)
                     .claim("authorities", convertAuthorityIntoSimpleForm(authorities))
                     .setIssuedAt(new Date())
@@ -55,6 +56,7 @@ public class JwtService {
                     .compact();
             return Map.of("username", username, "accessToken", token);
         } catch (Exception exception) {
+            exception.printStackTrace();
             throw new TokenException("Token generation exception");
         }
 
@@ -70,9 +72,10 @@ public class JwtService {
 
     }
 
+    @Transactional
     public RefreshTokenResponse validateToken(String refreshToken) {
         RefreshTokens refreshTokens = tokenRepository.findByToken(refreshToken).orElseThrow(RefreshTokenNotFound::new);
-        if (refreshTokens.getExpiryDate().isAfter(LocalDateTime.now())) {
+        if (refreshTokens.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new RefreshTokenExpired();
         }
         return new RefreshTokenResponse(generateToken(refreshTokens.getUser()).get("accessToken").toString(), refreshTokens.getExpiryDate().toString());

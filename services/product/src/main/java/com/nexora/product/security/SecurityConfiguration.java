@@ -2,6 +2,7 @@ package com.nexora.product.security;
 
 import com.nexora.product.utility.constants.IRole;
 import com.nexora.product.utility.constants.IUrls;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfiguration {
+
+    @Autowired
+    private JwtValidator jwtValidator;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -49,10 +53,11 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(IUrls.INTERNAL + "/**").permitAll()
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)
                         .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRole.ROLE_USER, IRole.ROLE_ADMIN)
                         .anyRequest().authenticated()
-                ).addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
+                ).addFilterBefore(jwtValidator, BasicAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);

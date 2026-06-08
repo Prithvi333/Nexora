@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,9 @@ public class Order {
     @Column(nullable = false)
     private String userUid;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.CREATED;
 
     @Column(nullable = false)
     private Double totalAmount;
@@ -37,8 +38,10 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+    @Builder.Default
+    @Column(updatable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }
 

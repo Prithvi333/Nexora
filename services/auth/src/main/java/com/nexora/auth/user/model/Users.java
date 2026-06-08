@@ -20,7 +20,8 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String uid;
+    @Builder.Default
+    private String uid = UUID.randomUUID().toString();
 
     private String username;
 
@@ -29,9 +30,11 @@ public class Users {
 
     private String password;
 
-    private Boolean enabled;
+    @Builder.Default
+    private Boolean enabled = true;
 
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

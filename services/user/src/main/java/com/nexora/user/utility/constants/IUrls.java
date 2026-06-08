@@ -7,4 +7,7 @@ public interface IUrls {
     String ADDRESS = "/address";
     String PREFERENCE = "/preference";
     String ADMIN = "api/users/admin";
+
+
+    String INTERNAL = "/internal";
 }

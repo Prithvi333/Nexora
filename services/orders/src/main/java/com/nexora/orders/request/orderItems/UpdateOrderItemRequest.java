@@ -1,18 +1,13 @@
 package com.nexora.orders.request.orderItems;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
 
 public record UpdateOrderItemRequest(
-        @NotNull(message = "OrderId cannot be null")
-        String orderUid,
+        @NotNull(message = "Order item uid cannot be null")
+        String orderItemUid,
 
-        @NotEmpty(message = "Order must contain at least one item")
-
-        @Valid
-        List<UpdateOrderItemRequest> items
+        @NotNull(message = "Order quantity can not be null")
+        Integer quantity
 ) {
 }

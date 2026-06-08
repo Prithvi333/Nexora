@@ -3,7 +3,7 @@ package com.nexora.orders.order.enums;
 
 public enum OrderStatus {
     PENDING,
-    CONFIRMED,
+    CREATED,
     CANCELLED,
     FAILED
 }

@@ -14,12 +14,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JwtValidator extends OncePerRequestFilter {
 
     @Value("${JWT_SECRET}")
@@ -31,7 +34,7 @@ public class JwtValidator extends OncePerRequestFilter {
 
         String token = response.getHeader("Authorization").substring(7);
         try {
-            Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build().parseClaimsJws(token).getBody();
+            Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseClaimsJws(token).getBody();
             setAuthenticationContext(claims);
             filterChain.doFilter(request, response);
         } catch (JwtException exception) {
