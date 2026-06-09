@@ -14,10 +14,12 @@ import com.nexora.product.response.image.ProductImageResponse;
 import com.nexora.product.response.inventory.InventoryResponse;
 import com.nexora.product.response.product.ProductResponse;
 import com.nexora.product.response.variant.ProductVariantResponse;
+import com.nexora.product.security.UserPrinciple;
 import com.nexora.product.variant.model.ProductVariant;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -98,5 +100,9 @@ public class GlobalUtility {
                 .primaryImage(productImageRequest.primary());
 
 
+    }
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

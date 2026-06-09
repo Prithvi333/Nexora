@@ -34,6 +34,6 @@ public class OrderHistory {
     private String actionBy;
 
     private String reason;
-
-    private LocalDateTime timestamp;
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
 }

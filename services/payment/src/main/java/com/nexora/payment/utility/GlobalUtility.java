@@ -5,9 +5,11 @@ import com.nexora.payment.kafka.event.CreatePaymentEvent;
 import com.nexora.payment.payment.model.Payment;
 import com.nexora.payment.response.history.PaymentHistoryResponse;
 import com.nexora.payment.response.payment.PaymentResponse;
+import com.nexora.payment.security.UserPrinciple;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GlobalUtility {
 
@@ -52,6 +54,11 @@ public class GlobalUtility {
                 .description(paymentHistory.getDescription())
                 .createdAt(paymentHistory.getCreatedAt())
                 .build();
+    }
+
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

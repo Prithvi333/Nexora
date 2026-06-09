@@ -4,9 +4,11 @@ import com.nexora.notification.notification.enums.NotificationEventType;
 import com.nexora.notification.notification.enums.NotificationStatus;
 import com.nexora.notification.notification.model.Notification;
 import com.nexora.notification.response.notification.NotificationResponse;
+import com.nexora.notification.security.UserPrinciple;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GlobalUtility {
 
@@ -36,6 +38,10 @@ public class GlobalUtility {
                 .message(notification.getMessage())
                 .createdAt(notification.getCreatedAt())
                 .build();
+    }
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

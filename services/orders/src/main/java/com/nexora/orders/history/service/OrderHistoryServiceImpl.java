@@ -24,6 +24,11 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     private OrderHistoryRepository orderHistoryRepository;
 
     @Override
+    public void createOrderHistory(OrderHistory orderHistory) {
+        orderHistoryRepository.save(orderHistory);
+    }
+
+    @Override
     public List<OrderHistoryResponse> orderHistoryList(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         orderRepository.findByUid(orderUid).orElseThrow(() -> new OrderNotFound(orderUid));
         sortBy = sortBy == null ? "timestamp" : sortBy;

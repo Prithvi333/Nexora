@@ -1,6 +1,8 @@
 package com.nexora.payment.security;
 
 
+import com.nexora.payment.utility.constants.IRoles;
+import com.nexora.payment.utility.constants.IUrls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,10 +54,9 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(IUrls.INTERNAL + "/**").permitAll()
-//                        .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)
-//                        .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRole.ROLE_USER, IRole.ROLE_ADMIN)
-                                .anyRequest().permitAll()
+                        .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRoles.ROLE_ADMIN, IRoles.ROlE_USER)
+                        .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRoles.ROLE_ADMIN)
+                .anyRequest().authenticated()
                 ).addFilterBefore(jwtValidator, BasicAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)

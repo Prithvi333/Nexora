@@ -9,9 +9,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,9 +45,11 @@ public class JwtValidator extends OncePerRequestFilter {
 
     private void setAuthenticationContext(Claims claims) {
         String username = (String) claims.get("username");
-        String authorities = (String) claims.get("authorities");
-        List<GrantedAuthority> authorityList = generateAuthentication(authorities);
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorityList));
+        String roles = (String) claims.get("roles");
+        String userUid = claims.getSubject();
+        UserPrinciple userPrinciple = new UserPrinciple(userUid, username, roles);
+        List<GrantedAuthority> authorityList = generateAuthentication(roles);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userPrinciple, null, authorityList));
     }
 
     private List<GrantedAuthority> generateAuthentication(String authorities) {

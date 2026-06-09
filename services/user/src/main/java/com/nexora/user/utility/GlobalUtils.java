@@ -11,9 +11,11 @@ import com.nexora.user.request.user.UserCreationRequest;
 import com.nexora.user.response.address.AddressResponse;
 import com.nexora.user.response.preference.UserPreferenceResponse;
 import com.nexora.user.response.user.UserProfileResponse;
+import com.nexora.user.security.UserPrinciple;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 
@@ -92,4 +94,9 @@ public class GlobalUtils {
                 .isDefault(address.getDefaultAddress())
                 .build();
     }
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
 }

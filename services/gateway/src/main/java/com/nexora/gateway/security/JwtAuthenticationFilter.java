@@ -14,6 +14,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -46,14 +47,11 @@ public class JwtAuthenticationFilter implements WebFilter {
         String token = authHeader.substring(7);
 
         try {
-            Claims claims = jwtValidationService.validateToken(token);
-            String username = (String) claims.get("username");
-            String roles = (String) claims.get("authorities");
+            jwtValidationService.validateToken(token);
 
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
-                    .header("username", username)
-                    .header("authorities", String.join(",", roles))
+                    .header("X-Correlation-Id", UUID.randomUUID().toString().substring(0, 6))
                     .build();
             return chain.filter(
                     exchange.mutate()

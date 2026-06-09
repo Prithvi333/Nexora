@@ -1,14 +1,17 @@
 package com.nexora.orders.utility;
 
 import com.nexora.orders.history.model.OrderHistory;
+import com.nexora.orders.order.enums.OrderStatus;
 import com.nexora.orders.order.model.Orders;
 import com.nexora.orders.orderItems.model.OrderItem;
 import com.nexora.orders.response.history.OrderHistoryResponse;
 import com.nexora.orders.response.order.OrderResponse;
 import com.nexora.orders.response.orderItems.OrderItemResponse;
+import com.nexora.orders.security.UserPrinciple;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class GlobalUtility {
 
@@ -18,9 +21,6 @@ public class GlobalUtility {
         Sort sort = direction == null ? Sort.by(sortBy).ascending() : direction.equals("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         return PageRequest.of(pageNo, pageSize, sort);
     }
-
-
-
 
 
     public static OrderResponse convertFromOrderToOrderResponse(Orders order) {
@@ -43,6 +43,14 @@ public class GlobalUtility {
                 .build();
     }
 
+    public static OrderHistory convertFromArgsToOrderHistory(String orderUid) {
+        return OrderHistory.builder().orderUid(orderUid)
+                .fromStatus(null)
+                .toStatus(OrderStatus.CREATED)
+                .actionBy(GlobalUtility.getLoggedInUserDetails().userUid())
+                .build();
+    }
+
     public static OrderHistoryResponse convertFromOderHistoryToOrderHistoryResponse(OrderHistory orderHistory) {
         return OrderHistoryResponse.builder()
                 .historyUid(orderHistory.getUid())
@@ -53,6 +61,11 @@ public class GlobalUtility {
                 .reason(orderHistory.getReason())
                 .timestamp(orderHistory.getTimestamp())
                 .build();
+    }
+
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

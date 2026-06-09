@@ -6,10 +6,13 @@ import com.nexora.auth.request.user.RegisterRequest;
 import com.nexora.auth.response.user.RegisterResponse;
 import com.nexora.auth.response.user.UserResponse;
 import com.nexora.auth.role.model.Roles;
+import com.nexora.auth.security.UserPrinciple;
 import com.nexora.auth.user.model.Users;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +34,6 @@ public class GlobalUtility {
     }
 
 
-
     public static Users convertToUserFromUserRequest(RegisterRequest userRequest) {
         return Users.builder().uid(UUID.randomUUID().toString()).enabled(true)
                 .refreshTokens(new ArrayList<>()).roles(new HashSet<>())
@@ -49,6 +51,10 @@ public class GlobalUtility {
         return UserResponse.builder().uid(user.getUid()).username(user.getUsername()).email(user.getEmail())
                 .roles(user.getRoles().stream().map(Roles::getRoleName)
                         .collect(Collectors.toSet())).createdAt(user.getCreatedAt()).build();
+    }
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

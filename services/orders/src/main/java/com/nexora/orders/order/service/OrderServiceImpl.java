@@ -3,6 +3,9 @@ package com.nexora.orders.order.service;
 import com.nexora.orders.clients.feign.products.ProductClient;
 import com.nexora.orders.clients.feign.users.UserClient;
 import com.nexora.orders.exception.order.OrderNotFound;
+import com.nexora.orders.history.model.OrderHistory;
+import com.nexora.orders.history.service.OrderHistoryService;
+import com.nexora.orders.order.enums.OrderStatus;
 import com.nexora.orders.order.model.Orders;
 import com.nexora.orders.order.repository.OrderRepository;
 import com.nexora.orders.orderItems.model.OrderItem;
@@ -25,6 +28,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
+    private OrderHistoryService orderHistoryService;
+
+    @Autowired
     private UserClient userClient;
 
     @Autowired
@@ -43,8 +49,10 @@ public class OrderServiceImpl implements OrderService {
                 .sum();
         order.totalAmount(totalAmount);
         order.items(orderItems);
-
-        return GlobalUtility.convertFromOrderToOrderResponse(orderRepository.save(order.build()));
+        Orders savedOrder = orderRepository.save(order.build());
+        OrderHistory orderHistory = GlobalUtility.convertFromArgsToOrderHistory(savedOrder.getUid());
+        orderHistoryService.createOrderHistory(orderHistory);
+        return GlobalUtility.convertFromOrderToOrderResponse(savedOrder);
     }
 
 
