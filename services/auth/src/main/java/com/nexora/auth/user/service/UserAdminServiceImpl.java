@@ -8,6 +8,8 @@ import com.nexora.auth.security.UserPrinciple;
 import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
 import com.nexora.auth.utils.GlobalUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,34 +25,47 @@ import java.util.Optional;
 @Service
 public class UserAdminServiceImpl implements UserAdminService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserAdminServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserResponse getUserResponseByUserUid(String uid) {
+        log.debug("Fetching user by uid: {}", uid);
         Optional<Users> user = userRepository.findByUidAndEnabledTrue(uid);
         if (user.isEmpty()) {
+            log.warn("User not found with uid: {}", uid);
             throw new UserNotFound("User not found with uid " + uid + "");
         }
+        log.info("User fetched successfully for uid: {}", uid);
         return GlobalUtility.convertFromUserToUserResponse(user.get());
-
     }
 
     @Override
     public SuccessResponse deleteUser(String usersUid) {
-        Users user = userRepository.findByUid(usersUid).orElseThrow(() -> new UserNotFound(usersUid));
+        log.debug("Attempting to delete user with uid: {}", usersUid);
+        Users user = userRepository.findByUid(usersUid).orElseThrow(() -> {
+            log.warn("Delete failed - user not found with uid: {}", usersUid);
+            return new UserNotFound(usersUid);
+        });
         userRepository.delete(user);
+        log.info("User deleted successfully with uid: {}", usersUid);
         return new SuccessResponse("User deleted successfully " + usersUid + "", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }
 
     @Override
     public List<UserResponse> getAllUsers(Integer pageNo, Integer pageSize, String sortBy, String direction) {
         sortBy = sortBy == null ? "username" : sortBy;
+        log.debug("Fetching all users - page: {}, size: {}, sortBy: {}, direction: {}", pageNo, pageSize, sortBy, direction);
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
         Page<Users> page = userRepository.findAll(pageable);
         if (page.isEmpty()) {
+            log.warn("No users found for page: {}, size: {}", pageNo, pageSize);
             throw new EmptyUserList();
         }
-        return page.getContent().stream().filter(Users::getEnabled).map(GlobalUtility::convertFromUserToUserResponse).toList();
+        List<UserResponse> users = page.getContent().stream().filter(Users::getEnabled).map(GlobalUtility::convertFromUserToUserResponse).toList();
+        log.info("Returning {} users for page: {}", users.size(), pageNo);
+        return users;
     }
 }

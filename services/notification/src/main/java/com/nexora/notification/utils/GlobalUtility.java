@@ -1,6 +1,6 @@
 package com.nexora.notification.utils;
 
-import com.nexora.notification.notification.enums.NotificationEventType;
+import com.nexora.notification.kafka.enums.EventType;
 import com.nexora.notification.notification.enums.NotificationStatus;
 import com.nexora.notification.notification.model.Notification;
 import com.nexora.notification.response.notification.NotificationResponse;
@@ -19,7 +19,7 @@ public class GlobalUtility {
         return PageRequest.of(pageNo, pageSize, sort);
     }
 
-    public static Notification convertFRomArgsToNotification(String to, String body, String userUid, NotificationEventType eventType, NotificationStatus status) {
+    public static Notification convertFRomArgsToNotification(String to, String body, String userUid, EventType eventType, NotificationStatus status) {
         return Notification.builder().subject("Notification").email(to)
                 .message(body)
                 .userUid(userUid)

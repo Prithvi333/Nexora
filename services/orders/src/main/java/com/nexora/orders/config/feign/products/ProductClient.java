@@ -1,4 +1,4 @@
-package com.nexora.orders.clients.feign.products;
+package com.nexora.orders.config.feign.products;
 
 import com.nexora.orders.request.orderItems.OrderItemRequest;
 import com.nexora.orders.response.order.VariantPriceResponse;

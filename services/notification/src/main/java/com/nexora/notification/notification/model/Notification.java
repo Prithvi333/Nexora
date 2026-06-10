@@ -1,6 +1,6 @@
 package com.nexora.notification.notification.model;
 
-import com.nexora.notification.notification.enums.NotificationEventType;
+import com.nexora.notification.kafka.enums.EventType;
 import com.nexora.notification.notification.enums.NotificationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -48,7 +48,7 @@ public class Notification {
     private NotificationStatus notificationStatus;
 
     @Enumerated(EnumType.STRING)
-    private NotificationEventType eventType;
+    private EventType eventType;
 
     @PastOrPresent(message = "Created time cannot be in the future")
     @Column(nullable = false, updatable = false)

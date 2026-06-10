@@ -1,8 +1,11 @@
 package com.nexora.payment.utility;
 
+
 import com.nexora.payment.history.model.PaymentHistory;
-import com.nexora.payment.kafka.event.CreatePaymentEvent;
+
+import com.nexora.payment.payment.enums.PaymentStatus;
 import com.nexora.payment.payment.model.Payment;
+import com.nexora.payment.request.payment.CreatePaymentRequest;
 import com.nexora.payment.response.history.PaymentHistoryResponse;
 import com.nexora.payment.response.payment.PaymentResponse;
 import com.nexora.payment.security.UserPrinciple;
@@ -20,12 +23,11 @@ public class GlobalUtility {
         return PageRequest.of(pageNo, pageSize, sort);
     }
 
-    public static Payment.PaymentBuilder convertFromPaymentEventToPayment(CreatePaymentEvent paymentEvent) {
-        return Payment.builder().orderUid(paymentEvent.orderUid())
-                .userUid(paymentEvent.userUid())
-                .amount(paymentEvent.amount())
-                .paymentMethod(paymentEvent.paymentMethod())
-                .idempotencyKey(paymentEvent.idempotencyKey());
+    public static Payment.PaymentBuilder convertFromPaymentEventToPayment(CreatePaymentRequest createPaymentRequest) {
+        return Payment.builder().orderUid(createPaymentRequest.orderUid())
+                .userUid(createPaymentRequest.userUid())
+                .amount(createPaymentRequest.amount())
+                .status(PaymentStatus.PENDING);
     }
 
     public static PaymentResponse convertFromPaymentToPaymentResponse(Payment payment) {

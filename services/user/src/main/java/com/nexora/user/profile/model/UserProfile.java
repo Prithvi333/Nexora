@@ -7,11 +7,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.rmi.server.UID;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.prefs.Preferences;
 
 @Entity
 @Table(name = "user_profiles")
@@ -68,6 +66,7 @@ public class UserProfile {
 
     private String profileImageKey;
 
-    private Boolean deleted;
+    @Builder.Default
+    private Boolean deleted = false;
 
 }

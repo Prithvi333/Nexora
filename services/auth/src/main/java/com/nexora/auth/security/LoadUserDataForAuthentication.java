@@ -4,6 +4,8 @@ import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.role.model.Roles;
 import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,13 +24,17 @@ import java.util.Set;
 @Component
 public class LoadUserDataForAuthentication implements UserDetailsService {
 
+    private static final Logger log = LoggerFactory.getLogger(LoadUserDataForAuthentication.class);
+
     @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        log.debug("Loading user by username: {}", userName);
         Optional<Users> user = userRepository.findByEmailAndEnabledTrue(userName);
         if (user.isEmpty()) {
+            log.warn("Authentication failed - user not found with email: {}", userName);
             throw new UserNotFound("User not found with email " + userName + "");
         }
         Users currentUser = user.get();
@@ -39,7 +45,7 @@ public class LoadUserDataForAuthentication implements UserDetailsService {
             grantedAuthorityList.add(new SimpleGrantedAuthority(role.getRoleName()));
         }
 
+        log.info("User loaded successfully for email: {} with {} role(s)", userName, grantedAuthorityList.size());
         return new User(userName, currentUser.getPassword(), grantedAuthorityList);
-
     }
 }

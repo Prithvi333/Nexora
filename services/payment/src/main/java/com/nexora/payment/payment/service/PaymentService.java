@@ -1,10 +1,11 @@
 package com.nexora.payment.payment.service;
 
-import com.nexora.payment.kafka.event.CreatePaymentEvent;
-import com.nexora.payment.response.payment.PaymentResponse;
+import com.nexora.common.events.PaymentRequestEvent;
+import com.nexora.payment.request.payment.CreatePaymentRequest;
+
 
 public interface PaymentService {
 
-    PaymentResponse makePayment(CreatePaymentEvent paymentEvent);
+    void makePayment(CreatePaymentRequest createPaymentRequest);
 
 }

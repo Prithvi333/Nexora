@@ -1,0 +1,5 @@
+package com.nexora.notification.kafka.enums;
+
+public enum EventType {
+    ORDER_CREATED, USER_CREATED
+}

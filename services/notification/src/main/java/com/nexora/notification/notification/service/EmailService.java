@@ -1,13 +1,14 @@
 package com.nexora.notification.notification.service;
-
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
 public class EmailService implements EmailNotificationService {
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
 
@@ -17,6 +18,8 @@ public class EmailService implements EmailNotificationService {
             String subject,
             String body) {
 
+        logger.info("Entering sendEmail with recipient: {} and subject: {}", to, subject);
+
         SimpleMailMessage message =
                 new SimpleMailMessage();
 
@@ -24,6 +27,9 @@ public class EmailService implements EmailNotificationService {
         message.setSubject(subject);
         message.setText(body);
 
+        logger.info("Sending email to: {}", to);
         mailSender.send(message);
+        logger.info("Email sent successfully to: {}", to);
     }
+
 }

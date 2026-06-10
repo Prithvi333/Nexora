@@ -1,4 +1,4 @@
-package com.nexora.orders.clients.feign.users;
+package com.nexora.orders.config.feign.users;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

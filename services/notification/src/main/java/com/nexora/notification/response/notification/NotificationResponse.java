@@ -1,6 +1,6 @@
 package com.nexora.notification.response.notification;
 
-import com.nexora.notification.notification.enums.NotificationEventType;
+import com.nexora.notification.kafka.enums.EventType;
 import com.nexora.notification.notification.enums.NotificationStatus;
 import lombok.Builder;
 
@@ -18,7 +18,7 @@ public record NotificationResponse(
 
         NotificationStatus status,
 
-        NotificationEventType eventType,
+        EventType eventType,
 
         LocalDateTime createdAt
 ) {
