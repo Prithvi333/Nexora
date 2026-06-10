@@ -47,6 +47,23 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryResponse> fetchCategory(String categoryUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
+
+        if (category != null) {
+            return List.of(GlobalUtility.convertFromCategoryToCategoryResponse(category));
+        }
+
+        sortBy = sortBy == null ? "name" : sortBy;
+        Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+        if (categoryPage.isEmpty()) {
+            throw new EmptyCategoryList();
+        }
+        return categoryPage.getContent().stream().map(GlobalUtility::convertFromCategoryToCategoryResponse).toList();
+    }
+
+    @Override
     public SuccessResponse updateCategory(UpdateCategoryRequest updateCategoryRequest) {
         Optional<Category> optionalCategory = categoryRepository.findByUid(updateCategoryRequest.categoryUid());
 
@@ -71,7 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
     public SuccessResponse deleteCategoryByUid(String categoryUid) {
         Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
         categoryRepository.delete(category);
-        redisCacheService.delete(Category.class.getSimpleName(),categoryUid);
+        redisCacheService.delete(Category.class.getSimpleName(), categoryUid);
         return new SuccessResponse("Category has been deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }
 }

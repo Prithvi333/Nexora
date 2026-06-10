@@ -16,11 +16,15 @@ import com.nexora.user.response.SuccessResponse;
 import com.nexora.user.response.preference.UserPreferenceResponse;
 import com.nexora.user.utility.GlobalUtils;
 import jakarta.transaction.Transactional;
+import org.hibernate.query.criteria.JpaCollectionJoin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PreferenceServiceImpl implements PreferenceService {
@@ -49,9 +53,16 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-    public UserPreferenceResponse fetchPreferences(String preferenceUid) {
+    public List<UserPreferenceResponse> fetchPreferences(String preferenceUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         UserPreference userPreference = getUserPreference(preferenceUid);
-        return GlobalUtils.convertFromUserPreferenceToUserPreferenceResponse(userPreference);
+        if (userPreference != null) {
+            return List.of(GlobalUtils.convertFromUserPreferenceToUserPreferenceResponse(userPreference));
+        }
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        sortBy = sortBy == null ? "language" : sortBy;
+        Pageable pageable = GlobalUtils.getPageable(pageNo, pageSize, sortBy, direction);
+        Page<UserPreference> preferencePage = userPreferenceRepository.findByUserUid(userUid, pageable);
+        return preferencePage.getContent().stream().map(GlobalUtils::convertFromUserPreferenceToUserPreferenceResponse).toList();
     }
 
     @Override
@@ -93,7 +104,8 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     private UserPreference getUserPreference(String preferenceUid) {
-        return userPreferenceRepository.findByUid(preferenceUid).orElseThrow(() -> new UserPreferenceNotFound(preferenceUid));
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        return userPreferenceRepository.findByUidAndUserUid(preferenceUid, userUid).orElseThrow(() -> new UserPreferenceNotFound(preferenceUid));
     }
 
 }

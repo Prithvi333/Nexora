@@ -19,12 +19,13 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
     private PaymentHistoryRepository paymentHistoryRepository;
 
     @Override
-    public List<PaymentHistoryResponse> getPaymentHistory(String userId, Integer pageNo, Integer pageSize, String sortBy, String direction) {
+    public List<PaymentHistoryResponse> getPaymentHistory(Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        String userUid = GlobalUtility.getLoggedInUserDetails().userUid();
         sortBy = sortBy == null ? "paymentId" : sortBy;
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
-        Page<PaymentHistory> paymentHistories = paymentHistoryRepository.findByUserId(userId, pageable);
+        Page<PaymentHistory> paymentHistories = paymentHistoryRepository.findByUserUid(userUid, pageable);
         if (paymentHistories.isEmpty()) {
-            throw new EmptyPaymentHistoryList(userId);
+            throw new EmptyPaymentHistoryList();
         }
         return paymentHistories.getContent().stream().map(GlobalUtility::convertFromPaymentHistoryToPaymentHistoryResponse).toList();
 

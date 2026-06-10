@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.ADMIN + IUrls.CATEGORY)
 public class CategoryController {
@@ -21,19 +23,26 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping
-    @Operation(summary = "Create category",description = "Used to create the category")
+    @Operation(summary = "Create category", description = "Used to create the category")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest categoryRequest) {
         return new ResponseEntity<>(categoryService.createCategory(categoryRequest), HttpStatus.CREATED);
     }
 
+    @GetMapping
+    @Operation(summary = "Fetching category", description = "Used to fetch the category")
+    public ResponseEntity<List<CategoryResponse>> fetchCategory(@RequestParam(required = false) String categoryUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+        return new ResponseEntity<>(categoryService.fetchCategory(categoryUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
+    }
+
+
     @PutMapping
-    @Operation(summary = "Update category",description = "Used to update the category")
+    @Operation(summary = "Update category", description = "Used to update the category")
     public ResponseEntity<SuccessResponse> updateCategory(@Valid @RequestBody UpdateCategoryRequest updateCategoryRequest) {
         return new ResponseEntity<>(categoryService.updateCategory(updateCategoryRequest), HttpStatus.OK);
     }
 
     @DeleteMapping
-    @Operation(summary = "Delete category",description = "Used to delete the category")
+    @Operation(summary = "Delete category", description = "Used to delete the category")
     public ResponseEntity<SuccessResponse> deleteCategoryByUid(@RequestParam("categoryUid") String categoryUid) {
         return new ResponseEntity<>(categoryService.deleteCategoryByUid(categoryUid), HttpStatus.OK);
     }

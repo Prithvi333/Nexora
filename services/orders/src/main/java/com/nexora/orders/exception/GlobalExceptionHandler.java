@@ -1,6 +1,7 @@
 package com.nexora.orders.exception;
 
 import com.nexora.orders.exception.history.EmptyOrderHistoryList;
+import com.nexora.orders.exception.history.OrderHistoryNotFound;
 import com.nexora.orders.exception.order.EmptyOrderList;
 import com.nexora.orders.exception.order.OrderNotFound;
 import com.nexora.orders.exception.orderItems.EmptyOrderItemList;
@@ -46,6 +47,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(orderItemNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(OrderHistoryNotFound.class)
+    public ResponseEntity<ErrorResponse> handleEmptyOrderHistoryNotFound(OrderHistoryNotFound orderHistoryNotFound) {
+        return new ResponseEntity<>(new ErrorResponse(orderHistoryNotFound.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(

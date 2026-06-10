@@ -10,7 +10,9 @@ import com.nexora.auth.token.model.RefreshTokens;
 import com.nexora.auth.token.repository.TokenRepository;
 import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
+import com.nexora.auth.utils.GlobalUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +40,10 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public List<RefreshTokenResponse> findByUserUid(String userUid) {
-        return tokenRepository.findByUserUid(userUid).stream().map(this::convertFromRefreshTokenToRefreshTokenResponse).toList();
+    public List<RefreshTokenResponse> findByUserUid(Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        sortBy = sortBy == null ? "expiryDate" : sortBy;
+        Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
+        return tokenRepository.findAll(pageable).stream().map(this::convertFromRefreshTokenToRefreshTokenResponse).toList();
     }
 
     @Override

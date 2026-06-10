@@ -71,6 +71,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     private UserProfile getUserProfile(String userProfileUid) {
-        return userProfileRepository.findByUid(userProfileUid).orElseThrow(() -> new UserProfileNotFound(userProfileUid));
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        return userProfileRepository.findByUidAndUserUid(userProfileUid, userUid).orElseThrow(() -> new UserProfileNotFound(userProfileUid));
     }
 }

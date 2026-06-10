@@ -21,7 +21,7 @@ public class OrderHistoryController {
     private OrderHistoryService orderHistoryService;
 
     @GetMapping
-    public ResponseEntity<List<OrderHistoryResponse>> getAllOrderHistory(@RequestParam String orderUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+    public ResponseEntity<List<OrderHistoryResponse>> getAllOrderHistory(@RequestParam(required = false) String orderUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
         return new ResponseEntity<>(orderHistoryService.orderHistoryList(orderUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 }

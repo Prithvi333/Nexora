@@ -26,7 +26,7 @@ public class PaymentHistory {
     private String paymentId;
 
     @Column(nullable = false)
-    private String userId;
+    private String userUid;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus fromStatus;
@@ -36,7 +36,6 @@ public class PaymentHistory {
 
     @Column(nullable = false)
     private String eventType;
-    // INITIATED, WEBHOOK_RECEIVED, RETRY, REFUND
 
     @Column(length = 2000)
     private String description;
@@ -45,7 +44,7 @@ public class PaymentHistory {
     private String gatewayResponse;
 
     @Column(nullable = false)
-    private String triggeredBy; // SYSTEM / USER / WEBHOOK
+    private String triggeredBy;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -36,7 +36,8 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public List<OrderItemResponse> fetchOrderItems(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
-        Orders order = orderRepository.findByUid(orderUid).orElseThrow(() -> new OrderNotFound(orderUid));
+        String userUid = GlobalUtility.getLoggedInUserDetails().userUid();
+        Orders order = orderRepository.findByUidAndUserUid(orderUid, userUid).orElseThrow(() -> new OrderNotFound(orderUid));
         sortBy = sortBy == null ? "price" : sortBy;
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
 
@@ -52,7 +53,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public SuccessResponse updateOrderItem(UpdateOrderItemRequest updateOrderItemRequest) {
-        OrderItem orderItem = orderItemRepository.findByUid(updateOrderItemRequest.orderItemUid()).orElseThrow(() -> new OrderItemNotFound(updateOrderItemRequest.orderItemUid()));
+        OrderItem orderItem = findOrderItem(updateOrderItemRequest.orderItemUid());
         productClient.checkQuantity(orderItem.getVariantUid(), updateOrderItemRequest.quantity());
         orderItem.setQuantity(updateOrderItemRequest.quantity());
         orderItemRepository.save(orderItem);
@@ -61,8 +62,13 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public SuccessResponse deleteOrderItem(String itemUid) {
-        OrderItem orderItem = orderItemRepository.findByUid(itemUid).orElseThrow(() -> new OrderItemNotFound(itemUid));
+        OrderItem orderItem = findOrderItem(itemUid);
         orderItemRepository.delete(orderItem);
         return new SuccessResponse("Order item has been deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
+    }
+
+    private OrderItem findOrderItem(String itemUid) {
+        String userUid = GlobalUtility.getLoggedInUserDetails().userUid();
+        return orderItemRepository.findByUidAndOrder_UserUid(itemUid, userUid).orElseThrow(() -> new OrderItemNotFound(itemUid));
     }
 }

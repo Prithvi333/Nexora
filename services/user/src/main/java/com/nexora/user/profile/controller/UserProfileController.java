@@ -20,11 +20,6 @@ public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
 
-    @PostMapping
-    public ResponseEntity<UserProfileResponse> createUserProfile(@RequestBody UserCreationRequest userCreationRequest) {
-        return new ResponseEntity<>(userProfileService.createUserProfile(userCreationRequest), HttpStatus.CREATED);
-    }
-
     @PutMapping
     @Operation(summary = "Update profile", description = "Used to update the user profile")
     public ResponseEntity<SuccessResponse<String>> updateUserProfile(@Valid UpdateUserProfileRequest updateUserProfileRequest) {

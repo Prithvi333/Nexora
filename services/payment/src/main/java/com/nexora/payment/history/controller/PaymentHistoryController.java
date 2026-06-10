@@ -20,8 +20,8 @@ public class PaymentHistoryController {
     @Autowired
     private PaymentHistoryService paymentHistoryService;
 
-    ResponseEntity<List<PaymentHistoryResponse>> getUserPaymentHistory(@RequestParam("userUid") String userUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, String sortBy, String direction) {
-        return new ResponseEntity<>(paymentHistoryService.getPaymentHistory(userUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
+    ResponseEntity<List<PaymentHistoryResponse>> getUserPaymentHistory(@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, String sortBy, String direction) {
+        return new ResponseEntity<>(paymentHistoryService.getPaymentHistory(pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 
 }

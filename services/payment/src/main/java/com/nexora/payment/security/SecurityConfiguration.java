@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRoles.ROLE_ADMIN, IRoles.ROlE_USER)
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRoles.ROLE_ADMIN)
-                .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 ).addFilterBefore(jwtValidator, BasicAuthenticationFilter.class)
 
                 .csrf(AbstractHttpConfigurer::disable)

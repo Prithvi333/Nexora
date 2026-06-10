@@ -2,6 +2,7 @@ package com.nexora.orders.order.service;
 
 import com.nexora.orders.clients.feign.products.ProductClient;
 import com.nexora.orders.clients.feign.users.UserClient;
+import com.nexora.orders.exception.order.EmptyOrderList;
 import com.nexora.orders.exception.order.OrderNotFound;
 import com.nexora.orders.history.model.OrderHistory;
 import com.nexora.orders.history.service.OrderHistoryService;
@@ -15,10 +16,13 @@ import com.nexora.orders.response.order.OrderResponse;
 import com.nexora.orders.response.order.VariantPriceResponse;
 import com.nexora.orders.utility.GlobalUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,8 +68,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse fetchOrder(String orderUid) {
-        Orders order = orderRepository.findByUid(orderUid).orElseThrow(() -> new OrderNotFound(orderUid));
-        return GlobalUtility.convertFromOrderToOrderResponse(order);
+    public List<OrderResponse> fetchOrder(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        String userUid = GlobalUtility.getLoggedInUserDetails().userUid();
+        Optional<Orders> order = orderRepository.findByUidAndUserUid(orderUid, userUid);
+        if (order.isPresent()) {
+            return List.of(GlobalUtility.convertFromOrderToOrderResponse(order.get()));
+        }
+
+        Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
+
+        Page<Orders> ordersPage = orderRepository.findByUserUid(userUid, pageable);
+
+        if (ordersPage.isEmpty()) {
+            throw new EmptyOrderList();
+        }
+
+        return ordersPage.getContent().stream().map(GlobalUtility::convertFromOrderToOrderResponse).toList();
+
+
     }
 }

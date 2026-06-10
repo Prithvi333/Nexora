@@ -4,6 +4,7 @@ import com.nexora.product.category.model.Category;
 import com.nexora.product.category.repository.CategoryRepository;
 import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.product.AlreadyAssociatedProduct;
+import com.nexora.product.exception.product.EmptyProductList;
 import com.nexora.product.exception.product.ProductNotFound;
 import com.nexora.product.product.model.Product;
 import com.nexora.product.product.repository.ProductRepository;
@@ -16,11 +17,14 @@ import com.nexora.product.response.variant.ProductVariantResponse;
 import com.nexora.product.utility.GlobalUtility;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -45,8 +49,25 @@ public class ProductServiceImpl implements ProductService {
         productBuilder.category(category);
         Product product = productRepository.save(productBuilder.build());
         category.getProducts().add(product);
-        redisCacheService.put(Product.class.getSimpleName(),product.getUid(),product);
+        redisCacheService.put(Product.class.getSimpleName(), product.getUid(), product);
         return GlobalUtility.convertFromProductToProductResponse(product);
+    }
+
+    @Override
+    public List<ProductResponse> fetchProduct(String productUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
+        if (productUid != null) {
+            Product product = isProductExist(productUid);
+            return List.of(GlobalUtility.convertFromProductToProductResponse(product));
+        }
+
+        sortBy = sortBy != null ? "name" : sortBy;
+        Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        if (productPage.isEmpty()) {
+            throw new EmptyProductList();
+        }
+        return productPage.getContent().stream().map(GlobalUtility::convertFromProductToProductResponse).toList();
+
     }
 
 
@@ -70,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
             product.setDescription(productUpdateRequest.description());
         }
 
-        redisCacheService.put(Product.class.getSimpleName(),product.getUid(),productRepository.save(product));
+        redisCacheService.put(Product.class.getSimpleName(), product.getUid(), productRepository.save(product));
 
         return new SuccessResponse("Product updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
 
@@ -81,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = isProductExist(productUid);
         productRepository.delete(product);
-        redisCacheService.delete(Product.class.getSimpleName(),productUid);
+        redisCacheService.delete(Product.class.getSimpleName(), productUid);
         return new SuccessResponse("Product deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }
 

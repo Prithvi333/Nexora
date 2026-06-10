@@ -25,6 +25,8 @@ public class OrderHistory {
 
     private String orderUid;
 
+    private String userUid;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus fromStatus;
 

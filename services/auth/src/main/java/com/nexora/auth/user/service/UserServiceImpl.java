@@ -21,7 +21,6 @@ import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
 import com.nexora.auth.utils.GlobalUtility;
 import com.nexora.auth.utils.contants.IRole;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -80,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUser(UpdateUserRequest userRequest) {
+    public SuccessResponse updateUser(UpdateUserRequest userRequest) {
 
         Optional<Users> user = userRepository.findByEmail(userRequest.email());
         StringBuilder sb = new StringBuilder();
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(currentUser);
 
-        return sb.isEmpty() ? "Nothing to update" : sb.toString() + "updated successfully";
+        return new SuccessResponse("User has been updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
 
     }
 

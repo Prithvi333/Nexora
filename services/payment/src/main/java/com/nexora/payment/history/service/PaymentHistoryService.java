@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PaymentHistoryService {
 
-    List<PaymentHistoryResponse> getPaymentHistory(String userId, Integer pageNo, Integer pageSize, String sortBy, String direction);
+    List<PaymentHistoryResponse> getPaymentHistory(Integer pageNo, Integer pageSize, String sortBy, String direction);
 
 }

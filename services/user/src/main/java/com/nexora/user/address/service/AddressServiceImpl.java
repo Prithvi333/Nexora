@@ -13,10 +13,13 @@ import com.nexora.user.response.address.AddressResponse;
 import com.nexora.user.utility.GlobalUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -72,9 +75,16 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressResponse fetchAddress(String addressUid) {
+    public List<AddressResponse> fetchAddress(String addressUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         Address address = getAddress(addressUid);
-        return GlobalUtils.convertFromAddressToAddressResponse(address);
+        if (address != null) {
+            return List.of(GlobalUtils.convertFromAddressToAddressResponse(address));
+        }
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        Pageable pageable = GlobalUtils.getPageable(pageNo, pageSize, sortBy, direction);
+        Page<Address> addresses = addressRepository.findByUserUid(userUid, pageable);
+
+        return addresses.getContent().stream().map(GlobalUtils::convertFromAddressToAddressResponse).toList();
     }
 
     @Override
@@ -85,6 +95,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private Address getAddress(String addressUid) {
-        return addressRepository.findByUid(addressUid).orElseThrow(() -> new AddressNotFound(addressUid));
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        return addressRepository.findByUidAndUserUid(addressUid, userUid).orElseThrow(() -> new AddressNotFound(addressUid));
     }
 }

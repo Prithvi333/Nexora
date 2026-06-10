@@ -5,5 +5,4 @@ public interface IUrls {
     String USER = "/api/payments/user";
 
     String HISTORY = "/history";
-    String PAYMENT = "/payment";
 }

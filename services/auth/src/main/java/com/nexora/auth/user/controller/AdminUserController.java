@@ -37,7 +37,7 @@ public class AdminUserController {
 
     @GetMapping
     @Operation(summary = "Fetch all users", description = "use to fetch the all users")
-    public ResponseEntity<List<UserResponse>> fetchAllUsers(@RequestParam(required = false) String roleUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+    public ResponseEntity<List<UserResponse>> fetchAllUsers(@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
         return new ResponseEntity<>(userAdminService.getAllUsers(pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 

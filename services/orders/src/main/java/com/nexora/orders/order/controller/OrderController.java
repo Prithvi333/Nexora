@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.USER + IUrls.ORDER)
 public class OrderController {
@@ -24,7 +26,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<OrderResponse> fetchOrder(@RequestParam("orderUid") String orderUid) {
-        return new ResponseEntity<>(orderService.fetchOrder(orderUid), HttpStatus.OK);
+    public ResponseEntity<List<OrderResponse>> fetchOrder(@RequestParam(required = false) String orderUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+        return new ResponseEntity<>(orderService.fetchOrder(orderUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 }

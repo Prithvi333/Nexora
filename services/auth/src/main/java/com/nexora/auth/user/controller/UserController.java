@@ -31,7 +31,7 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "Update User", description = "use to update the user")
-    public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequest userRequest) {
+    public ResponseEntity<SuccessResponse> updateUser(@Valid @RequestBody UpdateUserRequest userRequest) {
         return new ResponseEntity<>(userService.updateUser(userRequest), HttpStatus.OK);
     }
 

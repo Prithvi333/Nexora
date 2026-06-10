@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.ADMIN + IUrls.PRODUCT)
 public class ProductController {
@@ -24,6 +26,12 @@ public class ProductController {
     @Operation(summary = "Create product", description = "Used to create the product")
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest) {
         return new ResponseEntity<>(productService.createProduct(productRequest), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    @Operation(summary = "Fetch product", description = "Used to fetch the product")
+    public ResponseEntity<List<ProductResponse>> fetchProduct(@RequestParam(required = false) String productUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+        return new ResponseEntity<>(productService.fetchProduct(productUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 
     @PutMapping

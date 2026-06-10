@@ -21,8 +21,8 @@ public class TokenController {
     private TokenService tokenService;
 
     @GetMapping("{userUid}")
-    public ResponseEntity<List<RefreshTokenResponse>> getAllRefreshTokenByUserUid(@PathVariable("userUid") String userUid) {
-        return new ResponseEntity<>(tokenService.findByUserUid(userUid), HttpStatus.OK);
+    public ResponseEntity<List<RefreshTokenResponse>> getAllRefreshTokenByUserUid(@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
+        return new ResponseEntity<>(tokenService.findByUserUid(pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 
 }

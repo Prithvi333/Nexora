@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.USER + IUrls.PREFERENCE)
 public class PreferenceController {
@@ -28,8 +30,8 @@ public class PreferenceController {
 
     @GetMapping
     @Operation(summary = "Fetch preference", description = "Used to fetch the user preferences")
-    public ResponseEntity<UserPreferenceResponse> fetchPreferences(@RequestParam("preferenceUid") String preferenceUid) {
-        return new ResponseEntity<>(preferenceService.fetchPreferences(preferenceUid), HttpStatus.OK);
+    public ResponseEntity<List<UserPreferenceResponse>> fetchPreferences(@RequestParam(required = false) String preferenceUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, String direction) {
+        return new ResponseEntity<>(preferenceService.fetchPreferences(preferenceUid, pageNo, pageSize, sortBy, direction), HttpStatus.OK);
     }
 
     @PutMapping

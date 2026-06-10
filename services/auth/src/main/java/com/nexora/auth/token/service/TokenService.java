@@ -13,7 +13,7 @@ public interface TokenService {
 
     RefreshTokenResponse validateToken(String token);
 
-    List<RefreshTokenResponse> findByUserUid(String userUid);
+    List<RefreshTokenResponse> findByUserUid(Integer pageNo, Integer pageSize, String sortBy, String direction);
 
 
 }
