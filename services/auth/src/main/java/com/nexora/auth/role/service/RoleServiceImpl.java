@@ -73,12 +73,14 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public SuccessResponse deleteRole(String roleUid) {
-        log.info("Request received to delete role with UID: {}", roleUid);
+    public SuccessResponse toggleRole(String roleUid) {
+        log.info("Request received to toggle role with UID: {}", roleUid);
         Roles role = findRoleByUid(roleUid);
-        roleRepository.delete(role);
-        log.info("Role with UID: {} deleted successfully", roleUid);
-        return new SuccessResponse("Role with uid " + roleUid + " has been deleted successfully", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
+        role.setEnable(!role.getEnable());
+        roleRepository.save(role);
+        String toRespond = role.getEnable() ? "enabled" : "disabled";
+        log.info("Role with UID: {} has been {} successfully", roleUid, toRespond);
+        return new SuccessResponse("Role with uid " + roleUid + " has been " + toRespond + " successfully", HttpStatus.OK.value(), LocalDateTime.now());
     }
 
     @Override
@@ -102,6 +104,9 @@ public class RoleServiceImpl implements RoleService {
             if (isExist) {
                 log.warn("Failed to assign role. Role '{}' already associated with user '{}'", role.getRoleName(), user.getUsername());
                 throw new RoleAlreadyAssociated(role.getRoleName(), user.getUsername());
+            }
+            if (!role.getEnable()) {
+                throw new RoleNotFound("Role is disabled currently");
             }
             user.getRoles().add(role);
             log.debug("Adding role '{}' to user '{}'", role.getRoleName(), user.getUsername());

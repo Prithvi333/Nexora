@@ -4,17 +4,13 @@ import com.nexora.auth.response.user.UserResponse;
 import com.nexora.auth.user.service.UserAdminService;
 import com.nexora.auth.utils.contants.IUrls;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 @RestController
 @RequestMapping(IUrls.ADMIN)
 public class AdminUserController {
@@ -34,7 +30,7 @@ public class AdminUserController {
 
     @DeleteMapping
     @Operation(summary = "Delete user", description = "use to delete the user")
-    public ResponseEntity<SuccessResponse> deleteUser(@RequestParam("userId") String userUid) {
+    public ResponseEntity<SuccessResponse> deleteUser(@RequestParam("userUid") String userUid) {
         logger.info("Received request to delete user with userUid: {}", userUid);
         ResponseEntity<SuccessResponse> response = new ResponseEntity<>(userAdminService.deleteUser(userUid), HttpStatus.NO_CONTENT);
         logger.info("Successfully deleted user with userUid: {}", userUid);

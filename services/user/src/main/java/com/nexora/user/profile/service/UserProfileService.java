@@ -13,6 +13,8 @@ public interface UserProfileService {
 
     SuccessResponse<String> updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest);
 
+    void deleteUserProfile(String userUid);
+
     UserProfileResponse fetchUserProfile(String userProfileUid);
 
     void isProfileExists(String userProfileUid);

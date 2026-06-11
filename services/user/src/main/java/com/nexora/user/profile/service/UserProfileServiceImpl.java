@@ -1,9 +1,10 @@
 package com.nexora.user.profile.service;
 
 import com.nexora.common.events.UserCreatedEvent;
+import com.nexora.common.events.UserDeletedEvent;
 import com.nexora.user.exception.profile.UserProfileNotFound;
 import com.nexora.user.kafka.enums.EventType;
-import com.nexora.user.kafka.producer.UserCreatedEventProducer;
+import com.nexora.user.kafka.producer.UserEventProducer;
 import com.nexora.user.profile.model.UserProfile;
 import com.nexora.user.profile.repository.UserProfileRepository;
 import com.nexora.user.request.user.UpdateUserProfileRequest;
@@ -19,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
@@ -30,7 +30,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private UserProfileRepository userProfileRepository;
 
     @Autowired
-    private UserCreatedEventProducer userCreatedEventProducer;
+    private UserEventProducer userCreatedEventProducer;
 
     @Override
     @Transactional
@@ -41,7 +41,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("User profile saved to database with UID: {}", savedProfile.getUid());
 
         log.debug("Publishing USER_CREATED Kafka event for user target: {}", savedProfile.getUserUid());
-        userCreatedEventProducer.publishUserCreatedEventNotification(UserCreatedEvent.builder()
+        userCreatedEventProducer.publishToNotificationService(UserCreatedEvent.builder()
                 .eventType(EventType.USER_CREATED)
                 .email(savedProfile.getEmail())
                 .username(savedProfile.getFirstName())
@@ -82,6 +82,22 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.info("User profile with UID: {} updated successfully", updateUserProfileRequest.userProfileUid());
 
         return new SuccessResponse<>("User profile has been updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
+    }
+
+    @Override
+    public void deleteUserProfile(String userUid) {
+        UserProfile userProfile = userProfileRepository.findById(userUid).orElseThrow(() -> {
+            log.warn("Profile fetch failed. No record found UserUID: {}", userUid);
+            return new UserProfileNotFound(userUid);
+        });
+        userCreatedEventProducer.publishToNotificationService(UserDeletedEvent.builder()
+                .eventType(EventType.USER_DELETED)
+                .email(userProfile.getEmail())
+                .username(userProfile.getFirstName())
+                .userUid(userUid)
+                .build());
+
+        userProfileRepository.delete(userProfile);
     }
 
     @Override

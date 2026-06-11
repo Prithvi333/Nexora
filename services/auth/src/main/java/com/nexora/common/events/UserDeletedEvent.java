@@ -1,14 +1,11 @@
 package com.nexora.common.events;
 
+import com.nexora.auth.kafka.enums.EventType;
 import lombok.Getter;
-
 import lombok.experimental.SuperBuilder;
-import lombok.extern.jackson.Jacksonized;
-
 
 @SuperBuilder
 @Getter
-@Jacksonized
-public class UserCreatedEvent extends BaseEvent {
+public class UserDeletedEvent extends BaseEvent {
 
 }

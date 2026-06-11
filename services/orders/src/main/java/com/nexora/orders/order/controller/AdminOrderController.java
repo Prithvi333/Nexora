@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class AdminOrderController {
 
     @Autowired
     private AdminOrderService adminOrderService;
-
+    @GetMapping
     public ResponseEntity<List<OrderResponse>> fetchAllOrders(@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
         logger.info("Received request to fetch all orders with pageNo: {}, pageSize: {}, sortBy: {}, direction: {}", pageNo, pageSize, sortBy, direction);
         ResponseEntity<List<OrderResponse>> response = new ResponseEntity<>(adminOrderService.fetchAllOrders(pageNo, pageSize, sortBy, direction), HttpStatus.OK);

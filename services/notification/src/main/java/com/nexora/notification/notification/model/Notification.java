@@ -44,14 +44,13 @@ public class Notification {
     @Column(nullable = false, length = 5000)
     private String message;
 
-    @NotBlank(message = "Status is required")
+    @NotNull(message = "Status is required")
     private NotificationStatus notificationStatus;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-    @PastOrPresent(message = "Created time cannot be in the future")
-    @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
 

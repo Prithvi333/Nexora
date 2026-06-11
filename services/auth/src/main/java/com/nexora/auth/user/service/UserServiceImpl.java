@@ -5,8 +5,7 @@ import com.nexora.auth.exception.token.TokenException;
 import com.nexora.auth.exception.users.PasswordException;
 import com.nexora.auth.exception.users.UserNotFound;
 import com.nexora.auth.kafka.enums.EventType;
-import com.nexora.common.events.UserCreatedEvent;
-import com.nexora.auth.kafka.producer.UserCreatedEventProducer;
+import com.nexora.auth.kafka.producer.UserEventProducer;
 import com.nexora.auth.request.token.CreateRefreshTokenRequest;
 import com.nexora.auth.request.user.LoginRequest;
 import com.nexora.auth.request.user.RegisterRequest;
@@ -24,6 +23,7 @@ import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
 import com.nexora.auth.utils.GlobalUtility;
 import com.nexora.auth.utils.contants.IRole;
+import com.nexora.common.events.UserCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private UserCreatedEventProducer userCreatedEventProducer;
+    private UserEventProducer userCreatedEventProducer;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -76,8 +76,8 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of(fetchDefaultRole()));
         Users createdUser = userRepository.save(user);
         log.info("User registered successfully with uid: {}", createdUser.getUid());
-        userCreatedEventProducer.publishUserCreatedEvent(UserCreatedEvent.builder().userUid(createdUser.getUid())
-                .username(createdUser.getUsername()).email(createdUser.getEmail()).eventType(EventType.USER_CREATED).build());
+        UserCreatedEvent userCreatedEvent = UserCreatedEvent.builder().email(createdUser.getEmail()).userUid(createdUser.getUid()).username(createdUser.getUsername()).eventType(EventType.USER_CREATED).build();
+        userCreatedEventProducer.publishUserEvent(userCreatedEvent);
         log.debug("UserCreatedEvent published for uid: {}", createdUser.getUid());
         return GlobalUtility.convertToRegisterResponseFromUser(createdUser);
     }
@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
     public SuccessResponse updateUser(UpdateUserRequest userRequest) {
         log.debug("Attempting to update user with email: {}", userRequest.email());
         Optional<Users> user = userRepository.findByEmail(userRequest.email());
-        StringBuilder sb = new StringBuilder();
 
         if (user.isEmpty()) {
             log.warn("Update failed - user not found with email: {}", userRequest.email());
@@ -120,20 +119,15 @@ public class UserServiceImpl implements UserService {
             }
 
             currentUser.setPassword(passwordEncoder.encode(userRequest.newPassword()));
-            sb.append("Password ");
         }
         if (userRequest.username() != null && !userRequest.username().isBlank() && !userRequest.username().equals(currentUser.getUsername())) {
             currentUser.setUsername(userRequest.username());
-            sb.append("Username ");
         }
         if (userRequest.enabled() != null && userRequest.enabled() != currentUser.getEnabled()) {
             currentUser.setEnabled(userRequest.enabled());
-            sb.append("Enabled ");
         }
 
         userRepository.save(currentUser);
-        log.info("User updated successfully for uid: {} - fields changed: [{}]", currentUser.getUid(), sb.toString().trim());
-
         return new SuccessResponse("User has been updated successfully", HttpStatus.OK.value(), LocalDateTime.now());
     }
 

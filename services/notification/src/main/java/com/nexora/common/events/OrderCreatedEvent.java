@@ -1,18 +1,13 @@
 package com.nexora.common.events;
 
-import com.nexora.notification.kafka.enums.EventType;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
-
-public record OrderCreatedEvent(
-
-        String userUid,
-
-        String email,
-
-        String orderUid,
-
-        Double amount,
-
-        EventType eventType
-) {
+@SuperBuilder
+@Jacksonized
+@Getter
+public class OrderCreatedEvent extends BaseEvent {
+    String orderUid;
+    Double amount;
 }

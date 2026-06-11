@@ -2,20 +2,20 @@ package com.nexora.auth.user.service;
 
 import com.nexora.auth.exception.users.EmptyUserList;
 import com.nexora.auth.exception.users.UserNotFound;
+import com.nexora.auth.kafka.enums.EventType;
+import com.nexora.auth.kafka.producer.UserEventProducer;
 import com.nexora.auth.response.SuccessResponse;
 import com.nexora.auth.response.user.UserResponse;
-import com.nexora.auth.security.UserPrinciple;
 import com.nexora.auth.user.model.Users;
 import com.nexora.auth.user.repository.UserRepository;
 import com.nexora.auth.utils.GlobalUtility;
+import com.nexora.common.events.UserDeletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +29,9 @@ public class UserAdminServiceImpl implements UserAdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserEventProducer userDeletedEventProducer;
 
     @Override
     public UserResponse getUserResponseByUserUid(String uid) {
@@ -50,6 +53,7 @@ public class UserAdminServiceImpl implements UserAdminService {
             return new UserNotFound(usersUid);
         });
         userRepository.delete(user);
+        userDeletedEventProducer.publishUserEvent(UserDeletedEvent.builder().userUid(usersUid).eventType(EventType.USER_DELETED).build());
         log.info("User deleted successfully with uid: {}", usersUid);
         return new SuccessResponse("User deleted successfully " + usersUid + "", HttpStatus.NO_CONTENT.value(), LocalDateTime.now());
     }

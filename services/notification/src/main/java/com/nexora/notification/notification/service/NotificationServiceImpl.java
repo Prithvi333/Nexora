@@ -1,4 +1,5 @@
 package com.nexora.notification.notification.service;
+
 import com.nexora.notification.kafka.enums.EventType;
 import com.nexora.notification.exception.notification.EmptyNotificationList;
 import com.nexora.notification.notification.enums.NotificationStatus;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 @Service
 public class NotificationServiceImpl implements NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
@@ -29,7 +32,7 @@ public class NotificationServiceImpl implements NotificationService {
         logger.info("Entering sendNotification for userUid: {} and email: {}", notificationRequest.userUid(), notificationRequest.email());
         emailNotificationService.sendEmail(notificationRequest.email(), notificationRequest.message(), notificationRequest.userUid());
         logger.info("Email notification sent to: {}", notificationRequest.email());
-        Notification notification = GlobalUtility.convertFRomArgsToNotification(notificationRequest.email(), notificationRequest.message(), notificationRequest.userUid(), EventType.ORDER_CREATED, NotificationStatus.SENT);
+        Notification notification = GlobalUtility.convertFRomArgsToNotification(notificationRequest.email(), notificationRequest.message(), notificationRequest.userUid(), notificationRequest.eventType());
         notificationRepository.save(notification);
         logger.info("Notification saved successfully for userUid: {}", notificationRequest.userUid());
     }

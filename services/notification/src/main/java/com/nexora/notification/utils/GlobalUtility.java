@@ -19,11 +19,11 @@ public class GlobalUtility {
         return PageRequest.of(pageNo, pageSize, sort);
     }
 
-    public static Notification convertFRomArgsToNotification(String to, String body, String userUid, EventType eventType, NotificationStatus status) {
+    public static Notification convertFRomArgsToNotification(String to, String body, String userUid, EventType eventType) {
         return Notification.builder().subject("Notification").email(to)
                 .message(body)
                 .userUid(userUid)
-                .notificationStatus(status)
+                .notificationStatus(NotificationStatus.SENT)
                 .eventType(eventType)
                 .build();
     }

@@ -1,4 +1,5 @@
 package com.nexora.auth.role.controller;
+
 import com.nexora.auth.request.role.CreateRoleRequest;
 import com.nexora.auth.request.role.RoleResponse;
 import com.nexora.auth.response.SuccessResponse;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.ADMIN + IUrls.ROLE)
 public class RoleController {
@@ -30,11 +33,11 @@ public class RoleController {
         return response;
     }
 
-    @DeleteMapping("{roleUid}")
-    @Operation(summary = "Delete role", description = "Used to delete the role")
-    ResponseEntity<SuccessResponse> deleteRole(@PathVariable("roleUid") String roleUid) {
+    @DeleteMapping
+    @Operation(summary = "Toggle role", description = "Enable and disable role")
+    ResponseEntity<SuccessResponse> toggleRole(@RequestParam("roleUid") String roleUid) {
         logger.info("Received request to delete role with roleUid: {}", roleUid);
-        ResponseEntity<SuccessResponse> response = new ResponseEntity<>(roleService.deleteRole(roleUid), HttpStatus.NO_CONTENT);
+        ResponseEntity<SuccessResponse> response = new ResponseEntity<>(roleService.toggleRole(roleUid), HttpStatus.OK);
         logger.info("Role deleted successfully with roleUid: {}", roleUid);
         return response;
     }
