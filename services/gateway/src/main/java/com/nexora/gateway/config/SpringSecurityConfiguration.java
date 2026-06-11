@@ -1,4 +1,4 @@
-package com.nexora.gateway.security;
+package com.nexora.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

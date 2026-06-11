@@ -12,31 +12,67 @@ spring:
           uri: lb://auth
           predicates:
             - Path=/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: user-service
           uri: lb://users
           predicates:
             - Path=/api/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: product-service
           uri: lb://products
           predicates:
             - Path=/api/products/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: order-service
           uri: lb://orders
           predicates:
             - Path=/api/orders/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: payment-service
           uri: lb://payments
           predicates:
             - Path=/api/payments/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: notification-service
           uri: lb://notifications
           predicates:
             - Path=/api/notifications/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@userKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 eureka:
   client:
     service-url:

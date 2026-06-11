@@ -56,14 +56,15 @@ public class JwtAuthenticationFilter implements WebFilter {
         String token = authHeader.substring(7);
 
         try {
-            jwtValidationService.validateToken(token);
-
+            Claims claims = jwtValidationService.validateToken(token);
+            String userUid = claims.getSubject();
             String correlationId = UUID.randomUUID().toString().substring(0, 6);
             log.info("JWT validated successfully for path '{}', assigned correlationId: {}", path, correlationId);
 
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-Correlation-Id", correlationId)
+                    .header("X-USER-ID", userUid)
                     .build();
             return chain.filter(
                     exchange.mutate()
