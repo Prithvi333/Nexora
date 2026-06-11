@@ -15,61 +15,63 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 * Apply DevOps and Cloud Engineering best practices
 * Showcase real-world backend engineering skills
 
----
-
 ## 🏗️ System Architecture
 
+```text id="g2izvo"
                                       ┌─────────────┐
                                       │   Client    │
                                       └──────┬──────┘
                                              │
                                              ▼
-                              ┌─────────────────────────┐
-                              │      API Gateway        │
-                              │ JWT • Routing • RateLim │
-                              └───────────┬─────────────┘
-                                          │
-        ┌──────────────┬──────────────────┼──────────────────┬──────────────┬──────────────┐
-        │              │                  │                  │              │              │
-        ▼              ▼                  ▼                  ▼              ▼              ▼
+                            ┌──────────────────────────┐
+                            │       API Gateway        │
+                            │ JWT • Routing • Rate Lim │
+                            └────────────┬─────────────┘
+                                         │
+     ┌─────────────┬─────────────┬─────────────┬─────────────┬─────────────┐
+     │             │             │             │             │             │
+     ▼             ▼             ▼             ▼             ▼             ▼
 
- ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
- │ Auth Service│ │User Service │ │Product Svc  │ │ Order Svc   │ │ Payment Svc │ │Notification │
- └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ │   Service   │
-        │               │               │               │               │         └──────┬──────┘
-        ▼               ▼               ▼               ▼               ▼                │
+┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────────┐
+│  Auth   │ │  User   │ │ Product │ │  Order  │ │ Payment │ │ Notification│
+│ Service │ │ Service │ │ Service │ │ Service │ │ Service │ │   Service   │
+└────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └─────────────┘
+     │           │           │           │           │
+     ▼           ▼           ▼           ▼           ▼
 
- ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐              │
- │ Auth DB  │   │ User DB  │   │Product DB│   │ Order DB │   │Payment DB│              │
- └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘              │
+┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+│ Auth DB │ │ User DB │ │ProductDB│ │ OrderDB │ │PaymentDB│
+└─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
 
-        └──────────────┬───────────────┬───────────────┬───────────────┬────────────────┘
-                       │               │               │               │
-                       ▼               ▼               ▼               ▼
+     └───────────┬───────────┬───────────┬───────────┬───────────┘
+                 │           │           │           │
+                 ▼           ▼           ▼           ▼
 
-                    ┌──────────────────────────────────────────┐
-                    │              Apache Kafka                │
-                    │                                          │
-                    │  user-events                             │
-                    │  order-events                            │
-                    │  payment-events                          │
-                    │  notification-events                     │
-                    └──────────────────┬───────────────────────┘
-                                       │
-                                       ▼
+          ┌─────────────────────────────────────┐
+          │            Apache Kafka             │
+          │                                     │
+          │  user-events                        │
+          │  order-events                       │
+          │  payment-events                     │
+          │  notification-events                │
+          └──────────────────┬──────────────────┘
+                             │
+                             ▼
 
-                           ┌─────────────────────┐
-                           │       Redis         │
-                           │ OTP • Cache • JWT   │
-                           │ Rate Limiting       │
-                           └──────────┬──────────┘
-                                      │
-                                      ▼
+                   ┌─────────────────────┐
+                   │        Redis        │
+                   │ OTP • Cache • JWT   │
+                   │ Rate Limiting       │
+                   └──────────┬──────────┘
+                              │
+                              ▼
 
-                     ┌──────────────────────────────────┐
-                     │ Docker • Kubernetes • AWS • CI/CD│
-                     │            Jenkins               │
-                     └──────────────────────────────────┘
+              ┌────────────────────────────────┐
+              │ Docker • Jenkins • Git • Maven │
+              │            CI/CD               │
+              └────────────────────────────────┘
+```
+
 
 ## 🔐 Core Features
 
@@ -176,11 +178,9 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 | Auth Service         | Authentication & Authorization      |
 | User Service         | User management                     |
 | Product Service      | Product catalog management          |
-| Inventory Service    | Inventory tracking                  |
 | Order Service        | Order processing                    |
 | Payment Service      | Payment workflows                   |
 | Notification Service | Email & notifications               |
-| Config Server        | Centralized configuration           |
 | Discovery Server     | Service registration & discovery    |
 
 ---
