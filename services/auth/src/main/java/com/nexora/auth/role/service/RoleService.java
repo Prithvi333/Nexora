@@ -14,7 +14,7 @@ public interface RoleService {
 
     List<RoleResponse> getAllRoles(Integer pageNo, Integer pageSize, String sortBy, String direction);
 
-    SuccessResponse deleteRole(String roleUid);
+    SuccessResponse toggleRole(String roleUid);
 
     SuccessResponse updateRole(String userUid, String roleUid, Boolean assign);
 

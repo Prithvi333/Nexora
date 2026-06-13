@@ -5,5 +5,6 @@ public interface IUrls {
     String ORDER = "/order";
     String ITEM = "/item";
     String HISTORY = "/history";
+    String PAYMENT = "/payment";
     String USER = "/api/orders/user";
 }

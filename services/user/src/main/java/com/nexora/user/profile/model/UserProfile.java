@@ -7,11 +7,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.rmi.server.UID;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.prefs.Preferences;
 
 @Entity
 @Table(name = "user_profiles")
@@ -47,12 +45,10 @@ public class UserProfile {
     @Column(length = 10)
     private String phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_profile_id")
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_profile_id")
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserPreference> preferences;
 
     @Past
@@ -68,6 +64,7 @@ public class UserProfile {
 
     private String profileImageKey;
 
-    private Boolean deleted;
+    @Builder.Default
+    private Boolean deleted = false;
 
 }

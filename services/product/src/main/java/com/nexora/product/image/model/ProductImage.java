@@ -31,7 +31,6 @@ public class ProductImage {
     @Column(nullable = false, length = 500)
     private String url;
 
-    @Column(nullable = false)
     private Boolean primaryImage;
 
     @NotNull(message = "Product variant is required")

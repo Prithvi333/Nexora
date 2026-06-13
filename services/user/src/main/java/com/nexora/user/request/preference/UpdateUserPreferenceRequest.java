@@ -1,7 +1,5 @@
 package com.nexora.user.request.preference;
 
-import com.nexora.user.preference.enums.CurrencyType;
-import com.nexora.user.preference.enums.Language;
 
 public record UpdateUserPreferenceRequest(
 
@@ -10,6 +8,8 @@ public record UpdateUserPreferenceRequest(
         String language,
 
         String currency,
+
+        Boolean defaultPreference,
 
         Boolean emailNotifications,
 

@@ -1,14 +1,21 @@
 package com.nexora.orders.order.service;
 
+import com.nexora.common.events.PaymentStatusEvent;
 import com.nexora.orders.request.order.CreateOrderRequest;
+import com.nexora.orders.request.order.PaymentRequest;
+import com.nexora.orders.response.SuccessResponse;
 import com.nexora.orders.response.order.OrderResponse;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 public interface OrderService {
 
     OrderResponse createOrder(CreateOrderRequest orderRequest);
 
-    OrderResponse fetchOrder(String orderUid);
+    List<OrderResponse> fetchOrder(String userProfileUid, String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
+
+    SuccessResponse createPayment(PaymentRequest paymentRequest);
+
+    void updateOrderStatus(PaymentStatusEvent orderStatusEvent);
 
 }

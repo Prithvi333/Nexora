@@ -7,4 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Long> {
     Page<OrderHistory> findByOrderUid(String orderUid, Pageable pageable);
+
+    Page<OrderHistory> findByUserProfileUid(String userUid, Pageable pageable);
+
 }

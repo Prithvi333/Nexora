@@ -9,12 +9,14 @@ import java.util.List;
 
 public interface UserProfileService {
 
-    UserProfileResponse createUserProfile(UserCreationRequest userCreationRequest);
+    void createUserProfile(UserCreationRequest userCreationRequest);
 
     SuccessResponse<String> updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest);
 
+    void deleteUserProfile(String userUid);
+
     UserProfileResponse fetchUserProfile(String userProfileUid);
 
-    void isProfileExists(String userProfileUid);
+    Boolean isProfileExists(String userProfileUid);
 
 }

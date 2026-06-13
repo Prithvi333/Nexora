@@ -11,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "roles")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +24,9 @@ public class Roles {
     private String uid = UUID.randomUUID().toString();
 
     private String roleName;
+
+    @Builder.Default
+    private Boolean enable = true;
 
     @ManyToMany(mappedBy = "roles")
     private Set<Users> users;

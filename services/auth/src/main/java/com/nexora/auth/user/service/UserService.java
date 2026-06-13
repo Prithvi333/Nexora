@@ -14,7 +14,7 @@ public interface UserService {
 
     RegisterResponse registerUser(RegisterRequest registerRequest);
 
-    String updateUser(UpdateUserRequest userRequest);
+    SuccessResponse updateUser(UpdateUserRequest userRequest);
 
     TokenResponse userLogin(LoginRequest loginRequest);
 

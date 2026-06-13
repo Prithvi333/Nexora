@@ -25,6 +25,8 @@ public class OrderHistory {
 
     private String orderUid;
 
+    private String userProfileUid;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus fromStatus;
 
@@ -34,6 +36,6 @@ public class OrderHistory {
     private String actionBy;
 
     private String reason;
-
-    private LocalDateTime timestamp;
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
 }

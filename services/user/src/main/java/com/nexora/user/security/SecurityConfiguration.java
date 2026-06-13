@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(IUrls.INTERNAL + "/**").permitAll()
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)
                         .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRole.ROLE_ADMIN, IRole.ROLE_USER)
                         .anyRequest().authenticated()

@@ -10,10 +10,6 @@ public record CreateAddressRequest(
         String userProfileUid,
 
         @NotBlank
-        @Size(max = 100)
-        String fullName,
-
-        @NotBlank
         @Size(max = 150)
         String addressLine,
 

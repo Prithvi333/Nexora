@@ -7,7 +7,7 @@ public class UserNotFound extends RuntimeException {
     }
 
     public UserNotFound(String message) {
-        super(message);
+        super("User not found with uid " + message);
     }
 
 }

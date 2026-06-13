@@ -1,5 +1,7 @@
 package com.nexora.product.category.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nexora.product.product.model.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -40,5 +42,6 @@ public class Category {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     private List<Product> products;
 }

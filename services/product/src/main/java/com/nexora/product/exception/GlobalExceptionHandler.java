@@ -5,6 +5,7 @@ import com.nexora.product.exception.category.CategoryNotFound;
 import com.nexora.product.exception.category.EmptyCategoryList;
 import com.nexora.product.exception.category.SameCategoryException;
 import com.nexora.product.exception.image.ProductImageNotFound;
+import com.nexora.product.exception.inventory.InventoryException;
 import com.nexora.product.exception.inventory.InventoryNotFound;
 import com.nexora.product.exception.inventory.OrderQuantityGreaterThanActualQuantity;
 import com.nexora.product.exception.inventory.ReservedQuantityGreaterThanActualQuantity;
@@ -103,6 +104,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrderQuantityGreaterThanActualQuantity.class)
     public ResponseEntity<ErrorResponse> handleQuantityMismatch(OrderQuantityGreaterThanActualQuantity orderQuantityGreaterThanActualQuantity) {
         return new ResponseEntity<>(new ErrorResponse(orderQuantityGreaterThanActualQuantity.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InventoryException.class)
+    public ResponseEntity<ErrorResponse> handleInventoryException(InventoryException inventoryException) {
+        return new ResponseEntity<>(new ErrorResponse(inventoryException.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

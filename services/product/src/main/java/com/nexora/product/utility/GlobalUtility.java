@@ -14,13 +14,16 @@ import com.nexora.product.response.image.ProductImageResponse;
 import com.nexora.product.response.inventory.InventoryResponse;
 import com.nexora.product.response.product.ProductResponse;
 import com.nexora.product.response.variant.ProductVariantResponse;
+import com.nexora.product.security.UserPrinciple;
 import com.nexora.product.variant.model.ProductVariant;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.UUID;
 
 public class GlobalUtility {
@@ -43,15 +46,15 @@ public class GlobalUtility {
     }
 
     public static Product.ProductBuilder convertFromProductRequestToProduct(ProductRequest productRequest) {
-        return Product.builder().uid(UUID.randomUUID().toString()).active(productRequest.active()).name(productRequest.name()).brand(productRequest.brand()).productVariants(new ArrayList<>())
+        return Product.builder().uid(UUID.randomUUID().toString()).active(productRequest.active()).name(productRequest.name()).brand(productRequest.brand())
                 .description(productRequest.description()).createdAt(LocalDateTime.now());
     }
 
 
     public static ProductResponse convertFromProductToProductResponse(Product product) {
         return ProductResponse.builder().uid(product.getUid()).active(product.getActive()).brand(product.getBrand())
-                .productVariants(product.getProductVariants().stream()
-                        .map(GlobalUtility::convertFromProductVariantToProductVariantResponse).toList())
+                .productVariants(product.getProductVariants() != null ? product.getProductVariants().stream()
+                        .map(GlobalUtility::convertFromProductVariantToProductVariantResponse).toList() : null)
                 .description(product.getDescription()).category(convertFromCategoryToCategoryResponse(product.getCategory()))
                 .createdAt(product.getCreatedAt())
                 .name(product.getName())
@@ -98,5 +101,9 @@ public class GlobalUtility {
                 .primaryImage(productImageRequest.primary());
 
 
+    }
+
+    public static UserPrinciple getLoggedInUserDetails() {
+        return (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

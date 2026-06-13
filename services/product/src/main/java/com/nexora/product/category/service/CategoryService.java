@@ -11,6 +11,8 @@ public interface CategoryService {
 
     CategoryResponse createCategory(CreateCategoryRequest categoryRequest);
 
+    List<CategoryResponse> fetchCategory(String categoryUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
+
     SuccessResponse updateCategory(UpdateCategoryRequest updateCategoryRequest);
 
     SuccessResponse deleteCategoryByUid(String categoryUid);
