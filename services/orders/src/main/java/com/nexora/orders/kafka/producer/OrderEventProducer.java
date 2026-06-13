@@ -7,13 +7,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderCreatedEventProducer {
+public class OrderEventProducer {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
 
-    public void publishOrderCreatedEvent(OrderCreatedEvent orderCreatedEvent) {
-        kafkaTemplate.send(ITopics.ORDER_CREATED, orderCreatedEvent.userUid(), orderCreatedEvent);
+    public void publishOrderEvent(OrderCreatedEvent orderCreatedEvent) {
+        kafkaTemplate.send(ITopics.ORDER_ORDER_EVENT, orderCreatedEvent.getUserUid(), orderCreatedEvent);
     }
 }

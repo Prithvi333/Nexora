@@ -60,6 +60,7 @@ public class PreferenceServiceImpl implements PreferenceService {
 
         UserPreference.UserPreferenceBuilder userPreferenceBuilder = GlobalUtils.convertFromUserPreferenceRequestToUserPreference(userPreferenceRequest);
         userPreferenceBuilder.userUid(userProfile.getUserUid());
+        userPreferenceBuilder.userProfile(userProfile);
         UserPreference toSaveUserPreference = userPreferenceBuilder.build();
         userProfile.getPreferences().add(toSaveUserPreference);
 
@@ -71,8 +72,9 @@ public class PreferenceServiceImpl implements PreferenceService {
     public List<UserPreferenceResponse> fetchPreferences(String preferenceUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         log.debug("Fetching preferences. Preference UID: {}, Page: {}, Size: {}", preferenceUid, pageNo, pageSize);
 
-        UserPreference userPreference = getUserPreference(preferenceUid);
-        if (userPreference != null) {
+
+        if (preferenceUid != null) {
+            UserPreference userPreference = getUserPreference(preferenceUid);
             return List.of(GlobalUtils.convertFromUserPreferenceToUserPreferenceResponse(userPreference));
         }
 
@@ -98,6 +100,9 @@ public class PreferenceServiceImpl implements PreferenceService {
         }
         if (updateUserPreferenceRequest.emailNotifications() != null) {
             userPreference.setEmailNotifications(updateUserPreferenceRequest.emailNotifications());
+        }
+        if (userPreference.getDefaultPreference() != null) {
+            userPreference.setDefaultPreference(updateUserPreferenceRequest.defaultPreference());
         }
         if (updateUserPreferenceRequest.language() != null) {
             if (!Language.isExist(updateUserPreferenceRequest.language().toUpperCase())) {

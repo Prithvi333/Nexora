@@ -57,8 +57,9 @@ public class Payment {
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
-    @Column(nullable = false)
     private String gatewayName;
+
+    private String gatewayOrderId;
 
     private String gatewayPaymentId;
 

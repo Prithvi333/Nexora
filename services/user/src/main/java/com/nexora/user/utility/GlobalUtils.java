@@ -53,6 +53,7 @@ public class GlobalUtils {
     public static UserPreferenceResponse convertFromUserPreferenceToUserPreferenceResponse(UserPreference userPreference) {
 
         return UserPreferenceResponse.builder()
+                .defaultPreference(userPreference.getDefaultPreference())
                 .userPreferenceUid(userPreference.getUid())
                 .currency(userPreference.getCurrency())
                 .emailNotifications(userPreference.getEmailNotifications())
@@ -65,6 +66,7 @@ public class GlobalUtils {
     public static UserPreference.UserPreferenceBuilder convertFromUserPreferenceRequestToUserPreference(CreateUserPreferenceRequest userPreferenceRequest) {
         return UserPreference.builder().currency(CurrencyType.valueOf(userPreferenceRequest.currency().toUpperCase()))
                 .language(Language.valueOf(userPreferenceRequest.language().toUpperCase()))
+                .defaultPreference(userPreferenceRequest.defaultPreference())
                 .smsNotifications(userPreferenceRequest.smsNotifications())
                 .pushNotifications(userPreferenceRequest.pushNotifications())
                 .emailNotifications(userPreferenceRequest.emailNotifications());
@@ -73,8 +75,7 @@ public class GlobalUtils {
 
     public static Address.AddressBuilder convertFromAddressRequestToAddress(CreateAddressRequest addressRequest) {
         return Address.builder()
-                .defaultAddress(false)
-                .fullName(addressRequest.fullName())
+                .defaultAddress(addressRequest.defaultAddress())
                 .state(addressRequest.state())
                 .city(addressRequest.city())
                 .postalCode(addressRequest.postalCode())

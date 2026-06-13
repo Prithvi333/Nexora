@@ -23,24 +23,43 @@ public class RazorpayPaymentService implements PaymentService {
     private PaymentRepository paymentRepository;
 
     @Override
-    public void makePayment(CreatePaymentRequest createPaymentRequest) {
-        Payment.PaymentBuilder paymentBuilder = GlobalUtility.convertFromPaymentEventToPayment(createPaymentRequest);
-        if (!CurrencyType.isValid(createPaymentRequest.currency())) {
+    public void makePayment(CreatePaymentRequest request) {
+
+        Payment.PaymentBuilder paymentBuilder =
+                GlobalUtility.convertFromPaymentEventToPayment(request);
+
+        if (!CurrencyType.isValid(request.currency())) {
             throw new PaymentException("Currency type must be valid");
         }
-        paymentBuilder.currencyType(CurrencyType.valueOf(createPaymentRequest.currency()));
-        if (!PaymentMethod.isValid(createPaymentRequest.paymentMethod())) {
+
+        paymentBuilder.currencyType(
+                CurrencyType.valueOf(request.currency()));
+
+        if (!PaymentMethod.isValid(request.paymentMethod())) {
             throw new PaymentException("Payment method should be valid");
         }
-        paymentBuilder.paymentMethod(PaymentMethod.valueOf(createPaymentRequest.paymentMethod()));
-        paymentBuilder.idempotencyKey(createPaymentRequest.userUid().substring(0, 6) + createPaymentRequest.orderUid().substring(0, 6));
+
+        paymentBuilder.paymentMethod(
+                PaymentMethod.valueOf(request.paymentMethod()));
+
+        paymentBuilder.idempotencyKey(
+                request.userUid().substring(0, 6)
+                        + request.orderUid().substring(0, 6));
+
         try {
-            String paymentId = razorpayPaymentGateway.createOrder(createPaymentRequest.amount(), createPaymentRequest.currency(), createPaymentRequest.orderUid());
-            paymentBuilder.paymentId(paymentId);
+
+            String razorpayOrderId =
+                    razorpayPaymentGateway.createOrder(
+                            request.amount(),
+                            request.currency(),
+                            request.orderUid());
+
+            paymentBuilder.gatewayOrderId(razorpayOrderId);
+
         } catch (Exception e) {
-            throw new PaymentException();
+            throw new PaymentException("Unable to create Razorpay order");
         }
 
-        GlobalUtility.convertFromPaymentToPaymentResponse(paymentRepository.save(paymentBuilder.build()));
+        paymentRepository.save(paymentBuilder.build());
     }
 }

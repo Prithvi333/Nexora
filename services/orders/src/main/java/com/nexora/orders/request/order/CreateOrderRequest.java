@@ -8,8 +8,8 @@ import java.util.List;
 
 public record CreateOrderRequest(
 
-        @NotNull(message = "User uid cannot be null")
-        String userUid,
+        @NotNull(message = "User profile uid cannot be null")
+        String userProfileUid,
 
         @NotEmpty(message = "Order must contain at least one item")
         List<OrderItemRequest> items

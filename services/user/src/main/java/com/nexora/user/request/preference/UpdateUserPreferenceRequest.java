@@ -9,6 +9,8 @@ public record UpdateUserPreferenceRequest(
 
         String currency,
 
+        Boolean defaultPreference,
+
         Boolean emailNotifications,
 
         Boolean smsNotifications,

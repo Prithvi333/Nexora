@@ -1,5 +1,6 @@
 package com.nexora.product.inventory.service;
 
+import com.nexora.product.exception.inventory.InventoryException;
 import com.nexora.product.exception.inventory.InventoryNotFound;
 import com.nexora.product.inventory.model.Inventory;
 import com.nexora.product.inventory.repository.InventoryRepository;
@@ -34,8 +35,14 @@ public class InventoryServiceImpl implements InventoryService {
         Integer updatedQuantity = inventory.getQuantity();
         if (inventoryUpdateRequest.quantity() != null) {
             log.debug("Updating stock quantity from {} to {}", inventory.getQuantity(), inventoryUpdateRequest.quantity());
-            updatedQuantity = inventoryUpdateRequest.quantity();
-            inventory.setQuantity(updatedQuantity);
+            if (inventoryUpdateRequest.quantity() >= inventory.getReservedQuantity()) {
+                inventory.setQuantity(inventoryUpdateRequest.quantity());
+                updatedQuantity = inventoryUpdateRequest.quantity();
+            } else {
+                log.warn("Skipping reserved quantity update. Provided  quantity ({}) less than available reserved quantity ({})",
+                        inventoryUpdateRequest.quantity(), inventory.getReservedQuantity());
+                throw new InventoryException("Stock quantity should not be less than the reserved quantity");
+            }
         }
 
         if (inventoryUpdateRequest.reserved() != null) {
@@ -45,6 +52,7 @@ public class InventoryServiceImpl implements InventoryService {
             } else {
                 log.warn("Skipping reserved quantity update. Provided reserved quantity ({}) exceeds available stock quantity ({})",
                         inventoryUpdateRequest.reserved(), updatedQuantity);
+                throw new InventoryException("Reserved quantity should not be greater than the stock quantity");
             }
         }
 

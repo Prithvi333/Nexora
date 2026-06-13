@@ -4,6 +4,7 @@ import com.nexora.orders.order.model.Orders;
 import com.nexora.orders.order.repository.OrderRepository;
 import com.nexora.orders.response.order.OrderResponse;
 import com.nexora.orders.utility.GlobalUtility;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     private OrderRepository orderRepository;
 
     @Override
+    @Transactional
     public List<OrderResponse> fetchAllOrders(Integer pageNo, Integer pageSize, String sortBy, String direction) {
         logger.info("Entering fetchAllOrders with pageNo: {}, pageSize: {}, sortBy: {}, direction: {}", pageNo, pageSize, sortBy, direction);
         sortBy = sortBy == null ? "status" : sortBy;

@@ -1,5 +1,6 @@
 package com.nexora.payment.kafka.consumer;
 
+import com.nexora.common.events.BaseEvent;
 import com.nexora.common.events.PaymentRequestEvent;
 import com.nexora.payment.payment.service.PaymentService;
 import com.nexora.payment.request.payment.CreatePaymentRequest;
@@ -14,14 +15,19 @@ public class PaymentRequestEventConsumer {
     @Autowired
     private PaymentService paymentService;
 
-    @KafkaListener(topics = ITopics.PAYMENT_REQUEST)
-    public void consumePaymentRequestEvent(PaymentRequestEvent paymentRequestEvent) {
-        paymentService.makePayment(CreatePaymentRequest.builder()
-                .userUid(paymentRequestEvent.userUid())
-                .orderUid(paymentRequestEvent.orderUid())
-                .paymentMethod(paymentRequestEvent.paymentMethod())
-                .currency(paymentRequestEvent.currency())
-                .build());
+    @KafkaListener(topics = ITopics.ORDER_PAYMENT_EVENT)
+    public void consumePaymentRequestEvent(BaseEvent baseEvent) {
+
+        if (baseEvent instanceof PaymentRequestEvent paymentRequestEvent) {
+
+            paymentService.makePayment(CreatePaymentRequest.builder()
+                    .userUid(paymentRequestEvent.getUserUid())
+                    .amount(paymentRequestEvent.getAmount())
+                    .orderUid(paymentRequestEvent.getOrderUid())
+                    .paymentMethod(paymentRequestEvent.getPaymentMethod())
+                    .currency(paymentRequestEvent.getCurrency())
+                    .build());
+        }
 
     }
 

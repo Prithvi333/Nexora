@@ -26,7 +26,7 @@ public class Orders {
     private String uid = UUID.randomUUID().toString();
 
     @Column(nullable = false)
-    private String userUid;
+    private String userProfileUid;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

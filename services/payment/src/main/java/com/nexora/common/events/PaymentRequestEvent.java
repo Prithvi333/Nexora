@@ -1,12 +1,15 @@
 package com.nexora.common.events;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
-@Builder
-public record PaymentRequestEvent(
-        String currency,
-        String userUid,
-        String paymentMethod,
-        String orderUid
-) {
+@SuperBuilder
+@Getter
+@Jacksonized
+public class PaymentRequestEvent extends BaseEvent {
+    String currency;
+    Double amount;
+    String paymentMethod;
+    String orderUid;
 }

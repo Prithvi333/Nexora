@@ -1,4 +1,5 @@
 package com.nexora.product.category.controller;
+
 import com.nexora.product.category.service.CategoryService;
 import com.nexora.product.request.category.CreateCategoryRequest;
 import com.nexora.product.request.category.UpdateCategoryRequest;
@@ -6,6 +7,7 @@ import com.nexora.product.response.SuccessResponse;
 import com.nexora.product.response.category.CategoryResponse;
 import com.nexora.product.utility.constants.IUrls;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 @RestController
 @RequestMapping(IUrls.ADMIN + IUrls.CATEGORY)
 public class CategoryController {
@@ -32,6 +36,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Transactional
     @Operation(summary = "Fetching category", description = "Used to fetch the category")
     public ResponseEntity<List<CategoryResponse>> fetchCategory(@RequestParam(required = false) String categoryUid, @RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String direction) {
         logger.info("Received request to fetch category with categoryUid: {}, pageNo: {}, pageSize: {}, sortBy: {}, direction: {}", categoryUid, pageNo, pageSize, sortBy, direction);

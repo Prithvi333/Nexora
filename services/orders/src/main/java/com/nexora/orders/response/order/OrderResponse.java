@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public record OrderResponse(
         String orderUid,
-        String userUid,
+        String userProfileUId,
         OrderStatus status,
         Double totalAmount,
         List<OrderItemResponse> items,

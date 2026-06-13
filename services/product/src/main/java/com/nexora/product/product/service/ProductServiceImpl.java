@@ -69,6 +69,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public List<ProductResponse> fetchProduct(String productUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         log.debug("Fetching product(s). UID: {}, Page: {}, Size: {}", productUid, pageNo, pageSize);
 
@@ -77,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
             return List.of(GlobalUtility.convertFromProductToProductResponse(product));
         }
 
-        sortBy = sortBy != null ? "name" : sortBy;
+        sortBy = sortBy == null ? "name" : sortBy;
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
         Page<Product> productPage = productRepository.findAll(pageable);
 

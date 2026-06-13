@@ -1,5 +1,6 @@
 package com.nexora.user.address.model;
 
+import com.nexora.user.profile.model.UserProfile;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -18,6 +19,9 @@ import java.util.UUID;
 public class Address {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String userUid;
 
     @Builder.Default
@@ -42,6 +46,9 @@ public class Address {
     @NotBlank
     @Size(max = 50)
     private String country;
+
+    @ManyToOne
+    UserProfile userProfile;
 
     @NotBlank
     @Pattern(

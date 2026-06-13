@@ -28,7 +28,7 @@ public class GlobalUtility {
                 .orderUid(order.getUid())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
-                .userUid(order.getUserUid())
+                .userProfileUId(order.getUserProfileUid())
                 .items(order.getItems().stream().map(GlobalUtility::convertFromOrderItemToOrderItemResponse).toList())
                 .createdAt(order.getCreatedAt())
                 .build();
@@ -36,6 +36,7 @@ public class GlobalUtility {
 
     public static OrderItemResponse convertFromOrderItemToOrderItemResponse(OrderItem orderItem) {
         return OrderItemResponse.builder()
+                .uid(orderItem.getUid())
                 .price(orderItem.getPrice())
                 .quantity(orderItem.getQuantity())
                 .productUid(orderItem.getProductUid())
@@ -43,8 +44,9 @@ public class GlobalUtility {
                 .build();
     }
 
-    public static OrderHistory convertFromArgsToOrderHistory(String orderUid) {
+    public static OrderHistory convertFromArgsToOrderHistory(String orderUid, String userProfileUid) {
         return OrderHistory.builder().orderUid(orderUid)
+                .userProfileUid(userProfileUid)
                 .fromStatus(null)
                 .toStatus(OrderStatus.CREATED)
                 .actionBy(GlobalUtility.getLoggedInUserDetails().userUid())

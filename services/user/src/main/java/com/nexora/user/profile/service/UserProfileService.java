@@ -17,6 +17,6 @@ public interface UserProfileService {
 
     UserProfileResponse fetchUserProfile(String userProfileUid);
 
-    void isProfileExists(String userProfileUid);
+    Boolean isProfileExists(String userProfileUid);
 
 }

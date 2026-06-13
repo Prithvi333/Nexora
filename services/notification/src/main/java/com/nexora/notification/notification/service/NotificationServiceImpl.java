@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendNotification(NotificationRequest notificationRequest) {
         logger.info("Entering sendNotification for userUid: {} and email: {}", notificationRequest.userUid(), notificationRequest.email());
-        emailNotificationService.sendEmail(notificationRequest.email(), notificationRequest.message(), notificationRequest.userUid());
+        emailNotificationService.sendEmail(notificationRequest.email(), notificationRequest.userUid(), notificationRequest.message());
         logger.info("Email notification sent to: {}", notificationRequest.email());
         Notification notification = GlobalUtility.convertFRomArgsToNotification(notificationRequest.email(), notificationRequest.message(), notificationRequest.userUid(), notificationRequest.eventType());
         notificationRepository.save(notification);

@@ -46,7 +46,9 @@ public class AddressServiceImpl implements AddressService {
                 });
 
         Address.AddressBuilder addressBuilder = GlobalUtils.convertFromAddressRequestToAddress(createAddressRequest);
+        addressBuilder.fullName((userProfile.getFirstName() != null && userProfile.getLastName() != null) ? userProfile.getFirstName() + " " + userProfile.getLastName() : userProfile.getFirstName());
         addressBuilder.userUid(userProfile.getUserUid());
+        addressBuilder.userProfile(userProfile);
 
         Address addressToSave = addressBuilder.build();
         userProfile.getAddresses().add(addressToSave);

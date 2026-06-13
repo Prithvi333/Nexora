@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface OrderItemService {
 
-    List<OrderItemResponse> fetchOrderItems(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
+    List<OrderItemResponse> fetchOrderItems(String userProfileUid, String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
 
     SuccessResponse updateOrderItem(UpdateOrderItemRequest updateOrderItemRequest);
 
-    SuccessResponse deleteOrderItem(String itemUid);
+    SuccessResponse deleteOrderItem(String userProfileUid, String itemUid);
 
 }

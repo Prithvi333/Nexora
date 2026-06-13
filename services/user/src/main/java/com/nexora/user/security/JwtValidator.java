@@ -1,5 +1,6 @@
 package com.nexora.user.security;
 
+import com.nexora.user.utility.constants.IUrls;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -34,9 +35,14 @@ public class JwtValidator extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        System.out.println(request.getServletPath());
+        if (request.getServletPath().startsWith(IUrls.INTERNAL)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         log.debug("Intercepting request to validate JWT token for URI: {}", request.getRequestURI());
-        String token = response.getHeader("Authorization").substring(7);
+        String token = request.getHeader("Authorization").substring(7);
+
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseClaimsJws(token).getBody();
             setAuthenticationContext(claims);

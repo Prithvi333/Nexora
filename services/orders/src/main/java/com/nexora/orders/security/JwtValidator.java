@@ -33,7 +33,7 @@ public class JwtValidator extends OncePerRequestFilter {
 
         logger.info("Entering doFilterInternal for request URI: {}", request.getRequestURI());
 
-        String token = response.getHeader("Authorization").substring(7);
+        String token = request.getHeader("Authorization").substring(7);
         try {
             logger.info("Validating JWT token");
             Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseClaimsJws(token).getBody();

@@ -1,4 +1,5 @@
 package com.nexora.product.category.service;
+
 import com.nexora.product.category.model.Category;
 import com.nexora.product.category.repository.CategoryRepository;
 import com.nexora.product.exception.category.CategoryNotFound;
@@ -11,6 +12,7 @@ import com.nexora.product.request.category.UpdateCategoryRequest;
 import com.nexora.product.response.SuccessResponse;
 import com.nexora.product.response.category.CategoryResponse;
 import com.nexora.product.utility.GlobalUtility;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
@@ -53,9 +57,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryResponse> fetchCategory(String categoryUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         logger.info("Entering fetchCategory with categoryUid: {}", categoryUid);
-        Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
 
-        if (category != null) {
+
+        if (categoryUid != null) {
+            Category category = categoryRepository.findByUid(categoryUid).orElseThrow(() -> new CategoryNotFound(categoryUid));
             logger.info("Category found with uid: {}", categoryUid);
             return List.of(GlobalUtility.convertFromCategoryToCategoryResponse(category));
         }
@@ -73,6 +78,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public SuccessResponse updateCategory(UpdateCategoryRequest updateCategoryRequest) {
         logger.info("Entering updateCategory with categoryUid: {}", updateCategoryRequest.categoryUid());
         Optional<Category> optionalCategory = categoryRepository.findByUid(updateCategoryRequest.categoryUid());

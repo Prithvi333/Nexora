@@ -25,6 +25,9 @@ public class S3Service {
     @Value("${aws.bucket}")
     private String bucket;
 
+    @Value("${aws.region}")
+    private String region;
+
     @Autowired
     private S3Client s3Client;
 
@@ -65,6 +68,6 @@ public class S3Service {
     }
 
     private String generateUrl(String key) {
-        return "https://" + bucket + ".s3.aws.com/" + key;
+        return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key;
     }
 }

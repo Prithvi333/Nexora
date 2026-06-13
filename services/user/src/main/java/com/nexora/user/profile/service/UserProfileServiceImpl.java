@@ -109,13 +109,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public void isProfileExists(String userProfileUid) {
+    public Boolean isProfileExists(String userProfileUid) {
         log.trace("Checking structural existence of user profile UID: {}", userProfileUid);
         boolean isExist = userProfileRepository.existsByUid(userProfileUid);
         if (!isExist) {
             log.warn("Existence validation failed. Profile UID: {} does not exist", userProfileUid);
             throw new UserProfileNotFound(userProfileUid);
         }
+        return true;
     }
 
     private UserProfile getUserProfile(String userProfileUid) {

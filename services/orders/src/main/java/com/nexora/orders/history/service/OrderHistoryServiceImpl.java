@@ -1,4 +1,5 @@
 package com.nexora.orders.history.service;
+
 import com.nexora.orders.exception.history.EmptyOrderHistoryList;
 import com.nexora.orders.exception.history.OrderHistoryNotFound;
 import com.nexora.orders.exception.order.OrderNotFound;
@@ -14,7 +15,9 @@ import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
 @Service
 public class OrderHistoryServiceImpl implements OrderHistoryService {
     private static final Logger logger = LoggerFactory.getLogger(OrderHistoryServiceImpl.class);
@@ -33,10 +36,9 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     }
 
     @Override
-    public List<OrderHistoryResponse> orderHistoryList(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
+    public List<OrderHistoryResponse> orderHistoryList(String userProfileUid, String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction) {
         logger.info("Entering orderHistoryList with orderUid: {}, pageNo: {}, pageSize: {}, sortBy: {}, direction: {}", orderUid, pageNo, pageSize, sortBy, direction);
         sortBy = sortBy == null ? "timestamp" : sortBy;
-        String userUid = GlobalUtility.getLoggedInUserDetails().userUid();
         Pageable pageable = GlobalUtility.getPageable(pageNo, pageSize, sortBy, direction);
 
         Page<OrderHistory> orderHistoryPage;
@@ -49,15 +51,15 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
             }
         }
 
-        logger.info("Fetching order history for userUid: {}", userUid);
-        orderHistoryPage = orderHistoryRepository.findByUserUid(userUid, pageable);
+        logger.info("Fetching order history for userProfileUid: {}", userProfileUid);
+        orderHistoryPage = orderHistoryRepository.findByUserProfileUid(userProfileUid, pageable);
 
         if (orderHistoryPage.isEmpty()) {
-            logger.warn("No order history found for userUid: {}", userUid);
+            logger.warn("No order history found for userProfileUid: {}", userProfileUid);
             throw new EmptyOrderHistoryList();
         }
 
-        logger.info("Fetched {} order history records successfully for userUid: {}", orderHistoryPage.getContent().size(), userUid);
+        logger.info("Fetched {} order history records successfully for userProfileUid: {}", orderHistoryPage.getContent().size(), userProfileUid);
         return orderHistoryPage.getContent().stream().map(GlobalUtility::convertFromOderHistoryToOrderHistoryResponse).toList();
 
     }

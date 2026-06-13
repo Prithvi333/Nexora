@@ -18,6 +18,8 @@ public record UserPreferenceResponse(
 
         Boolean smsNotifications,
 
+        Boolean defaultPreference,
+
         Boolean pushNotifications
 
 ) {

@@ -2,6 +2,7 @@ package com.nexora.user.preference.model;
 
 import com.nexora.user.preference.enums.CurrencyType;
 import com.nexora.user.preference.enums.Language;
+import com.nexora.user.profile.model.UserProfile;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -18,6 +19,9 @@ import java.util.UUID;
 public class UserPreference {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long Id;
+
     private String userUid;
 
     @Builder.Default
@@ -30,6 +34,12 @@ public class UserPreference {
     @NotNull
     @Enumerated(EnumType.STRING)
     private CurrencyType currency;
+
+    @ManyToOne
+    UserProfile userProfile;
+
+    @Builder.Default
+    private Boolean defaultPreference = false;
 
     @Builder.Default
     private Boolean emailNotifications = true;

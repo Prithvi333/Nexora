@@ -13,6 +13,7 @@ import com.nexora.product.request.variant.VariantPriceResponse;
 import com.nexora.product.response.product.ProductResponse;
 import com.nexora.product.utility.GlobalUtility;
 import com.nexora.product.variant.model.ProductVariant;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,7 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
+    @Transactional
     public List<VariantPriceResponse> getProductsByOrderItem(List<OrderItemRequest> orderItemRequests) {
         log.info("Validating and pricing {} order items", orderItemRequests != null ? orderItemRequests.size() : 0);
         List<VariantPriceResponse> variantPriceResponses = new ArrayList<>();

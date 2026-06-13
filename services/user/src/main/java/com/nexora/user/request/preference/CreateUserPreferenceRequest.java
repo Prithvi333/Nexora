@@ -15,6 +15,9 @@ public record CreateUserPreferenceRequest(
         @NotNull
         String currency,
 
+        @NotNull
+        Boolean defaultPreference,
+
         Boolean emailNotifications,
 
         Boolean smsNotifications,

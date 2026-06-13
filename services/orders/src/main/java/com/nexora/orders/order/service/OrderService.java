@@ -1,5 +1,6 @@
 package com.nexora.orders.order.service;
 
+import com.nexora.common.events.PaymentStatusEvent;
 import com.nexora.orders.request.order.CreateOrderRequest;
 import com.nexora.orders.request.order.PaymentRequest;
 import com.nexora.orders.response.SuccessResponse;
@@ -11,8 +12,10 @@ public interface OrderService {
 
     OrderResponse createOrder(CreateOrderRequest orderRequest);
 
-    List<OrderResponse> fetchOrder(String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
+    List<OrderResponse> fetchOrder(String userProfileUid, String orderUid, Integer pageNo, Integer pageSize, String sortBy, String direction);
 
     SuccessResponse createPayment(PaymentRequest paymentRequest);
+
+    void updateOrderStatus(PaymentStatusEvent orderStatusEvent);
 
 }
