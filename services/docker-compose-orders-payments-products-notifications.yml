@@ -12,6 +12,9 @@ services:
     pull_policy: always
     ports:
       - "8082:8082"
+    environment:
+      - AWS_ACCESS_KEY={access_key}
+      - AWS_SECRET_KEY={secret_key}
     networks:
       - nexora-network
 
