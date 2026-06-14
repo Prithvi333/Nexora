@@ -1,0 +1,29 @@
+services:
+  orders:
+    image: prithvi069/nexora-orders:latest
+    pull_policy: always
+    ports:
+      - "8083:8083"
+    networks:
+      - nexora-network
+
+  payments:
+    image: prithvi069/nexora-payments:latest
+    pull_policy: always
+    ports:
+      - "8084:8084"
+    networks:
+      - nexora-network
+
+  notifications:
+    image: prithvi069/nexora-notifications:latest
+    pull_policy: always
+    ports:
+      - "8085:8085"
+    networks:
+      - nexora-network
+
+networks:
+  nexora-network:
+    external: true
+    name: nexora-network

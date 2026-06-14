@@ -1,0 +1,21 @@
+services:
+  auth:
+    image: prithvi069/nexora-auth:latest
+    pull_policy: always
+    ports:
+      - "8081:8081"
+    networks:
+      - nexora-network
+
+  users:
+    image: prithvi069/nexora-users:latest
+    pull_policy: always
+    ports:
+      - "8082:8082"
+    networks:
+      - nexora-network
+
+networks:
+  nexora-network:
+    external: true
+    name: nexora-network

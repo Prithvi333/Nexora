@@ -137,6 +137,7 @@
 
 
     <build>
+    <finalName>payments</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
