@@ -1,0 +1,106 @@
+version: "3.8"
+
+services:
+  eureka:
+    image: prithvi069/nexora-eureka:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - nexora-network
+
+  gateway:
+    image: prithvi069/nexora-gateway:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - nexora-network
+
+  auth:
+    image: prithvi069/nexora-auth:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - nexora-network
+
+  products:
+    image: prithvi069/nexora-products:latest
+    ports:
+      - "8082:8082"
+    environment:
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+    networks:
+      - nexora-network
+
+  users:
+    image: prithvi069/nexora-users:latest
+    ports:
+      - "8083:8083"
+    networks:
+      - nexora-network
+
+  orders:
+    image: prithvi069/nexora-orders:latest
+    ports:
+      - "8084:8084"
+    networks:
+      - nexora-network
+
+  payments:
+    image: prithvi069/nexora-payments:latest
+    ports:
+      - "8085:8085"
+    networks:
+      - nexora-network
+
+  notifications:
+    image: prithvi069/nexora-notifications:latest
+    ports:
+      - "8086:8086"
+    networks:
+      - nexora-network
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - nexora-network
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nexora
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - nexora-network
+
+  kafka:
+    image: apache/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    networks:
+      - nexora-network
+
+networks:
+  nexora-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  mysql-data:

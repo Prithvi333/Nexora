@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY target/payments.jar /app/payments.jar
 EXPOSE 8086

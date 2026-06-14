@@ -1,5 +1,5 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY target/eureka.jar /app/eureka.jar
-EXPOSE 8081
+EXPOSE 8761
 ENTRYPOINT [ "java","-jar","eureka.jar" ]

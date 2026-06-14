@@ -76,10 +76,9 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka:8761/eureka
+      defaultZone: http://nexora_eureka:8761/eureka
     fetch-registry: true
     register-with-eureka: true
-
 
 logging:
   level:
