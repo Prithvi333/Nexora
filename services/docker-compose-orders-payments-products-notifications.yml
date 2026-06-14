@@ -7,6 +7,14 @@ services:
     networks:
       - nexora-network
 
+  products:
+    image: prithvi069/nexora-products:latest
+    pull_policy: always
+    ports:
+      - "8086:8082"
+    networks:
+      - nexora-network
+
   payments:
     image: prithvi069/nexora-payments:latest
     pull_policy: always
