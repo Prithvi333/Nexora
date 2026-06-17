@@ -1,72 +1,6 @@
 version: "3.8"
 
 services:
-  eureka:
-    image: prithvi069/nexora-eureka:latest
-    ports:
-      - "8761:8761"
-    networks:
-      - nexora-network
-
-  gateway:
-    image: prithvi069/nexora-gateway:latest
-    ports:
-      - "8080:8080"
-    networks:
-      - nexora-network
-
-  auth:
-    image: prithvi069/nexora-auth:latest
-    ports:
-      - "8081:8081"
-    networks:
-      - nexora-network
-
-  products:
-    image: prithvi069/nexora-products:latest
-    ports:
-      - "8082:8082"
-    environment:
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-    networks:
-      - nexora-network
-
-  users:
-    image: prithvi069/nexora-users:latest
-    ports:
-      - "8083:8083"
-    networks:
-      - nexora-network
-
-  orders:
-    image: prithvi069/nexora-orders:latest
-    ports:
-      - "8084:8084"
-    networks:
-      - nexora-network
-
-  payments:
-    image: prithvi069/nexora-payments:latest
-    ports:
-      - "8085:8085"
-    networks:
-      - nexora-network
-
-  notifications:
-    image: prithvi069/nexora-notifications:latest
-    ports:
-      - "8086:8086"
-    networks:
-      - nexora-network
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
-    networks:
-      - nexora-network
-
   mysql:
     image: mysql:latest
     environment:
@@ -96,6 +30,90 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     networks:
       - nexora-network
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - nexora-network
+
+  eureka:
+    image: prithvi069/nexora-eureka:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - nexora-network
+    depends_on:
+      - mysql
+      - kafka
+      - redis
+
+  gateway:
+    image: prithvi069/nexora-gateway:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  auth:
+    image: prithvi069/nexora-auth:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  products:
+    image: prithvi069/nexora-products:latest
+    ports:
+      - "8082:8082"
+    environment:
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  users:
+    image: prithvi069/nexora-users:latest
+    ports:
+      - "8083:8083"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  orders:
+    image: prithvi069/nexora-orders:latest
+    ports:
+      - "8084:8084"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  payments:
+    image: prithvi069/nexora-payments:latest
+    ports:
+      - "8085:8085"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
+
+  notifications:
+    image: prithvi069/nexora-notifications:latest
+    ports:
+      - "8086:8086"
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka
 
 networks:
   nexora-network:
