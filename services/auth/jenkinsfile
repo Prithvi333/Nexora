@@ -6,7 +6,24 @@ pipeline {
     }
 
     stages {
+stage('Check Changes') {
+    steps {
+        script {
+            sh "git fetch origin main"
 
+            def change = sh(
+                script: "git diff --name-only origin/main HEAD | grep '^services/auth/' || true",
+                returnStdout: true
+            ).trim()
+
+            if (!change) {
+                echo "No changes in auth service. Skipping pipeline."
+                currentBuild.result = 'NOT_BUILT'
+                error("Skipping build - no relevant changes")
+            }
+        }
+    }
+}
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -15,9 +32,7 @@ pipeline {
         }
 
         stage('Build JAR') {
-            when {
-                changeset "services/auth/**"
-            }
+
             steps {
                 dir('services/auth') {
                     sh 'mvn clean package -DskipTests'
@@ -26,9 +41,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            when {
-                changeset "services/auth/**"
-            }
+
             steps {
                 dir('services/auth') {
                     sh 'docker build -t prithvi069/nexora-auth .'
@@ -37,9 +50,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            when {
-                changeset "services/auth/**"
-            }
+
             steps {
                 withCredentials([
                     usernamePassword(
@@ -72,9 +83,7 @@ pipeline {
         }
 
         stage('Deploy Stack') {
-            when {
-                changeset "services/auth/**"
-            }
+
             steps {
                 sh '''
                docker service update --image prithvi069/nexora-auth nexora_auth

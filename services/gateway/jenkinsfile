@@ -7,6 +7,25 @@ pipeline {
 
     stages {
 
+stage('Check Changes') {
+    steps {
+        script {
+            sh "git fetch origin main"
+
+            def change = sh(
+                script: "git diff --name-only origin/main HEAD | grep '^services/gateway/' || true",
+                returnStdout: true
+            ).trim()
+
+            if (!change) {
+                echo "No changes in gateway service. Skipping pipeline."
+                currentBuild.result = 'NOT_BUILT'
+                error("Skipping build - no relevant changes")
+            }
+        }
+    }
+}
+
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -15,9 +34,7 @@ pipeline {
         }
 
         stage('Build JAR') {
-            when {
-                changeset "services/gateway/**"
-            }
+
             steps {
                 dir('services/gateway') {
                     sh 'mvn clean package -DskipTests'
@@ -26,9 +43,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            when {
-                changeset "services/gateway/**"
-            }
+
             steps {
                 dir('services/gateway') {
                     sh 'docker build -t prithvi069/nexora-gateway .'
@@ -37,9 +52,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            when {
-                changeset "services/gateway/**"
-            }
+
             steps {
                 withCredentials([
                     usernamePassword(
@@ -72,9 +85,7 @@ pipeline {
         }
 
         stage('Deploy Stack') {
-            when {
-                changeset "services/gateway/**"
-            }
+
             steps {
                 sh '''
                docker service update --image prithvi069/nexora-gateway nexora_gateway
