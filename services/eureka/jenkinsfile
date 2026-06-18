@@ -63,6 +63,7 @@ pipeline {
                     if ! docker info | grep -i "Swarm: active"; then
                         echo "Initializing Swarm..."
                         docker swarm init
+                        docker stack deploy -c docker-compose.yml nexora
                     else
                         echo "Swarm already active"
                     fi
@@ -76,7 +77,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker stack deploy -c docker-compose.yml nexora
+               docker service update --image prithvi069/nexora-eureka nexora_eureka
                 '''
             }
         }
