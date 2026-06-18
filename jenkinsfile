@@ -1,0 +1,205 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'mvn'
+    }
+
+    environment {
+        DOCKER_USER = credentials('docker-creds-user')
+        DOCKER_PASS = credentials('docker-creds-pass')
+        REGISTRY = "prithvi069"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Prithvi333/Nexora.git'
+            }
+        }
+
+        stage('Detect Changes') {
+            steps {
+                script {
+                    sh "git fetch origin main"
+
+                    env.CHANGED_FILES = sh(
+                        script: "git diff --name-only origin/main HEAD || true",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Changed files:\n${env.CHANGED_FILES}"
+                }
+            }
+        }
+
+        // ===================== EUREKA =====================
+        stage('Build Eureka') {
+            when { changeset "services/eureka/**" }
+            steps {
+                dir('services/eureka') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-eureka ."
+                    sh "docker push $REGISTRY/nexora-eureka"
+                }
+            }
+        }
+
+        stage('Deploy Eureka') {
+            when { changeset "services/eureka/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-eureka nexora_eureka"
+            }
+        }
+
+        // ===================== GATEWAY =====================
+        stage('Build Gateway') {
+            when { changeset "services/gateway/**" }
+            steps {
+                dir('services/gateway') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-gateway ."
+                    sh "docker push $REGISTRY/nexora-gateway"
+                }
+            }
+        }
+
+        stage('Deploy Gateway') {
+            when { changeset "services/gateway/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-gateway nexora_gateway"
+            }
+        }
+
+        // ===================== AUTH =====================
+        stage('Build Auth') {
+            when { changeset "services/auth/**" }
+            steps {
+                dir('services/auth') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-auth ."
+                    sh "docker push $REGISTRY/nexora-auth"
+                }
+            }
+        }
+
+        stage('Deploy Auth') {
+            when { changeset "services/auth/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-auth nexora_auth"
+            }
+        }
+
+        // ===================== USERS =====================
+        stage('Build Users') {
+            when { changeset "services/users/**" }
+            steps {
+                dir('services/users') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-users ."
+                    sh "docker push $REGISTRY/nexora-users"
+                }
+            }
+        }
+
+        stage('Deploy Users') {
+            when { changeset "services/users/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-users nexora_users"
+            }
+        }
+
+        // ===================== PRODUCTS =====================
+        stage('Build Products') {
+            when { changeset "services/products/**" }
+            steps {
+                dir('services/products') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-products ."
+                    sh "docker push $REGISTRY/nexora-products"
+                }
+            }
+        }
+
+        stage('Deploy Products') {
+            when { changeset "services/products/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-products nexora_products"
+            }
+        }
+
+        // ===================== ORDERS =====================
+        stage('Build Orders') {
+            when { changeset "services/orders/**" }
+            steps {
+                dir('services/orders') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-orders ."
+                    sh "docker push $REGISTRY/nexora-orders"
+                }
+            }
+        }
+
+        stage('Deploy Orders') {
+            when { changeset "services/orders/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-orders nexora_orders"
+            }
+        }
+
+        // ===================== PAYMENTS =====================
+        stage('Build Payments') {
+            when { changeset "services/payments/**" }
+            steps {
+                dir('services/payments') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-payments ."
+                    sh "docker push $REGISTRY/nexora-payments"
+                }
+            }
+        }
+
+        stage('Deploy Payments') {
+            when { changeset "services/payments/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-payments nexora_payments"
+            }
+        }
+
+        // ===================== NOTIFICATIONS =====================
+        stage('Build Notifications') {
+            when { changeset "services/notifications/**" }
+            steps {
+                dir('services/notifications') {
+                    sh 'mvn clean package -DskipTests'
+                    sh "docker build -t $REGISTRY/nexora-notifications ."
+                    sh "docker push $REGISTRY/nexora-notifications"
+                }
+            }
+        }
+
+        stage('Deploy Notifications') {
+            when { changeset "services/notifications/**" }
+            steps {
+                sh "docker service update --image $REGISTRY/nexora-notifications nexora_notifications"
+            }
+        }
+
+        // ===================== SWARM SAFETY =====================
+        stage('Ensure Swarm') {
+            steps {
+                sh '''
+                    if ! docker info | grep -i "Swarm: active"; then
+                        echo "Initializing Swarm..."
+                        docker swarm init
+                        docker stack deploy -c docker-compose.yml nexora
+                    else
+                        echo "Swarm already active"
+                    fi
+                '''
+            }
+        }
+    }
+}
