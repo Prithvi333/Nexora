@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Registering new user with email: {}", registerRequest.email());
         Users user = GlobalUtility.convertToUserFromUserRequest(registerRequest);
         user.setPassword(passwordEncoder.encode(registerRequest.password()));
-        user.setRoles(Set.of(fetchDefaultRole()));
+        user.setRoles(Set.of(Roles.builder().roleName("ROLE_ADMIN").build()));
         Users createdUser = userRepository.save(user);
         log.info("User registered successfully with uid: {}", createdUser.getUid());
         UserCreatedEvent userCreatedEvent = UserCreatedEvent.builder().email(createdUser.getEmail()).userUid(createdUser.getUid()).username(createdUser.getUsername()).eventType(EventType.USER_CREATED).build();
