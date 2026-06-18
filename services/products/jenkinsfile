@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'mvn'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Prithvi333/Nexora.git'
+            }
+        }
+
+        stage('Build JAR') {
+            when {
+                changeset "services/products/**"
+            }
+            steps {
+                dir('services/products') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            when {
+                changeset "services/products/**"
+            }
+            steps {
+                dir('services/products') {
+                    sh 'docker build -t prithvi069/nexora-products .'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                changeset "services/products/**"
+            }
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push prithvi069/nexora-products
+                        docker logout
+                    '''
+                }
+            }
+        }
+
+        stage('Ensure Swarm') {
+            steps {
+                sh '''
+                    if ! docker info | grep -i "Swarm: active"; then
+                        echo "Initializing Swarm..."
+                        docker swarm init
+                    else
+                        echo "Swarm already active"
+                    fi
+                '''
+            }
+        }
+
+        stage('Deploy Stack') {
+            when {
+                changeset "services/products/**"
+            }
+            steps {
+                sh '''
+                    docker stack deploy -c docker-compose.yml nexora
+                '''
+            }
+        }
+    }
+}

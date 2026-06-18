@@ -14,23 +14,10 @@ pipeline {
             }
         }
 
-        stage('Check Auth Changes') {
-            steps {
-                script {
-                    def changedFiles = sh(
-                        script: 'git diff --name-only HEAD~1 HEAD',
-                        returnStdout: true
-                    ).trim()
-
-                    if (!changedFiles.contains('services/auth/')) {
-                        currentBuild.result = 'NOT_BUILT'
-                        error('No changes found in services/auth')
-                    }
-                }
-            }
-        }
-
         stage('Build JAR') {
+            when {
+                changeset "services/auth/**"
+            }
             steps {
                 dir('services/auth') {
                     sh 'mvn clean package -DskipTests'
@@ -39,6 +26,9 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            when {
+                changeset "services/auth/**"
+            }
             steps {
                 dir('services/auth') {
                     sh 'docker build -t prithvi069/nexora-auth .'
@@ -47,6 +37,9 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+            when {
+                changeset "services/auth/**"
+            }
             steps {
                 withCredentials([
                     usernamePassword(
@@ -61,6 +54,30 @@ pipeline {
                         docker logout
                     '''
                 }
+            }
+        }
+
+        stage('Ensure Swarm') {
+            steps {
+                sh '''
+                    if ! docker info | grep -i "Swarm: active"; then
+                        echo "Initializing Swarm..."
+                        docker swarm init
+                    else
+                        echo "Swarm already active"
+                    fi
+                '''
+            }
+        }
+
+        stage('Deploy Stack') {
+            when {
+                changeset "services/auth/**"
+            }
+            steps {
+                sh '''
+                    docker stack deploy -c docker-compose.yml nexora
+                '''
             }
         }
     }
