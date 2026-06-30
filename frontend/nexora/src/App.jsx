@@ -1,13 +1,16 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
-import "./App.css";
-
+import Navbar from "./components/navbar/Navbar";
+import Main from "./components/main/Main";
+import Footer from "./components/footer/Footer";
 function App() {
   const [count, setCount] = useState(0);
-
-  return <h1>Hii there</h1>;
+  return (
+    <>
+      <Navbar />
+      <Main />
+      <Footer />
+    </>
+  );
 }
 
 export default App;
