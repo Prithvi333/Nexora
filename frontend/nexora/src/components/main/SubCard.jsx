@@ -15,7 +15,7 @@ function SubCard({ url, title, desc, textColor, small }) {
         >
           {desc}
         </h3>
-        <button className=" bg-white opacity-0 transition-all duration-150 ease-in-out group-hover:opacity-70  text-black rounded-2xl px-4 py-2 font-semibold">
+        <button className=" bg-white opacity-0 transition-all mb-2 duration-150 ease-in-out group-hover:opacity-70  text-black rounded-2xl px-4 py-2 font-semibold">
           Shop now
         </button>
       </div>

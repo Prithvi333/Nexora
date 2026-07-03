@@ -36,34 +36,6 @@ public class SecurityConfiguration {
                                 SessionCreationPolicy.STATELESS
                         )
                 )
-
-                .cors(cors ->
-                        cors.configurationSource(request -> {
-
-                            CorsConfiguration config =
-                                    new CorsConfiguration();
-                            config.setAllowCredentials(true);
-                            config.setAllowedOrigins(List.of("*"));
-
-                            config.setAllowedMethods(
-                                    List.of("*")
-                            );
-
-                            config.setAllowedHeaders(
-                                    List.of("*")
-                            );
-
-                            config.setExposedHeaders(
-                                    List.of(
-                                            "Authorization",
-                                            "X-Refresh-Token"
-                                    )
-                            );
-
-                            return config;
-                        })
-                )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(IUrls.USER + "/login", IUrls.USER + "/signup", IUrls.USER + "/token").permitAll()
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)

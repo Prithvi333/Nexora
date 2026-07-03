@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface IConstants {
 
-    List<String> allowedUrls = Arrays.asList("/api/auth/user/login", "/api/auth/user/signup","/api/auth/user/token");
+    List<String> allowedUrls = Arrays.asList("/api/auth/user/login", "/api/auth/user/signup","http://localhost:8080/api/auth/user/signup","/api/auth/user/token");
 }

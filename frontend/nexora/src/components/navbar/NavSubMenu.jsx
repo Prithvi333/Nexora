@@ -7,7 +7,7 @@ function NavSubMenu() {
         Feature
       </a>
       <a
-        href=""
+        href="#"
         className=" text-sm text-gray-200 capitalize hover:text-black transition duration-200"
       >
         Rip the script
@@ -16,13 +16,13 @@ function NavSubMenu() {
         New Arrival
       </a>
       <a
-        href=""
+        href="#"
         className="text-sm capitalize text-gray-200 hover:text-black transition duration-200"
       >
         Best Seller
       </a>
       <a
-        href=""
+        href="#"
         className="text-sm text-gray-200 capitalize hover:text-black transition duration-200"
       >
         Top pick up under $5000

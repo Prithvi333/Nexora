@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -30,16 +31,16 @@ public class JwtAuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        String path = exchange.getRequest()
-                .getURI()
-                .getPath();
+        if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
+            return chain.filter(exchange);
+        }
 
-        log.debug("Incoming request path: {}", path);
+        String path = exchange.getRequest().getURI().getPath();
 
         boolean isPublic = IConstants.allowedUrls.stream()
                 .anyMatch(path::startsWith);
+
         if (isPublic) {
-            log.debug("Path '{}' is public, skipping JWT validation", path);
             return chain.filter(exchange);
         }
 
