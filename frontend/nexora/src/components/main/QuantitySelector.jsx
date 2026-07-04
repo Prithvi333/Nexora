@@ -1,6 +1,11 @@
 import React from "react";
 
-function QuantitySelector({ quantity, onIncrease, onDecrease }) {
+function QuantitySelector({
+  availableQuantity,
+  quantity,
+  onIncrease,
+  onDecrease,
+}) {
   return (
     <div className="inline-flex my-2 items-center border border-gray-300 rounded-lg overflow-hidden">
       <button
@@ -16,8 +21,9 @@ function QuantitySelector({ quantity, onIncrease, onDecrease }) {
       </div>
 
       <button
+        disabled={quantity === availableQuantity}
         onClick={onIncrease}
-        className="w-10 h-10 flex items-center justify-center text-xl font-semibold hover:bg-gray-100 transition"
+        className={`w-10 h-10 ${availableQuantity === quantity ? "bg-gray-300" : ""} flex items-center justify-center text-xl font-semibold hover:bg-gray-100 transitio`}
       >
         +
       </button>

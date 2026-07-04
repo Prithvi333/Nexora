@@ -32,26 +32,6 @@ public class SecurityConfiguration {
                         )
                 )
 
-                .cors(cors ->
-                        cors.configurationSource(request -> {
-
-                            CorsConfiguration config =
-                                    new CorsConfiguration();
-                            config.setAllowCredentials(true);
-                            config.setAllowedOrigins(List.of("*"));
-
-                            config.setAllowedMethods(
-                                    List.of("*")
-                            );
-
-                            config.setAllowedHeaders(
-                                    List.of("*")
-                            );
-
-                            return config;
-                        })
-                )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(IUrls.INTERNAL + "/**").permitAll()
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRole.ROLE_ADMIN)

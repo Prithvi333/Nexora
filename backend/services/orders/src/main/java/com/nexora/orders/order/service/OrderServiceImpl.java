@@ -68,16 +68,11 @@ public class OrderServiceImpl implements OrderService {
         logger.info("User existence verified for userUid: {}", orderRequest.userProfileUid());
         Orders.OrdersBuilder order = Orders.builder().userProfileUid(orderRequest.userProfileUid());
         List<VariantPriceResponse> productResponse = productClient.getProducts(orderRequest.items());
-        System.out.println(productResponse);
         logger.info("Fetched product pricing for {} items", orderRequest.items().size());
         Map<String, Double> variantPriceResponse = productResponse.stream().collect(Collectors.toMap(VariantPriceResponse::variantUid, VariantPriceResponse::price));
         List<OrderItem> orderItems = createOrderItems(variantPriceResponse, orderRequest.items());
-
-        Double totalAmount = orderItems.stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-        logger.info("Calculated total order amount: {}", totalAmount);
-        order.totalAmount(totalAmount);
+        logger.info("Calculated total order amount: {}", orderRequest.totalAmount());
+        order.totalAmount(orderRequest.totalAmount());
         order.items(orderItems);
         Orders toSaveOrder = order.build();
         orderItems.forEach(orderItem -> orderItem.setOrder(toSaveOrder));

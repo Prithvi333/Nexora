@@ -10,7 +10,7 @@ import java.util.List;
 public record UserProfileResponse(
 
         String userUid,
-
+        String uid,
         String firstName,
 
         String lastName,

@@ -31,27 +31,6 @@ public class SecurityConfiguration {
                                 SessionCreationPolicy.STATELESS
                         )
                 )
-
-                .cors(cors ->
-                        cors.configurationSource(request -> {
-
-                            CorsConfiguration config =
-                                    new CorsConfiguration();
-                            config.setAllowCredentials(true);
-                            config.setAllowedOrigins(List.of("*"));
-
-                            config.setAllowedMethods(
-                                    List.of("*")
-                            );
-
-                            config.setAllowedHeaders(
-                                    List.of("Authorization")
-                            );
-
-                            return config;
-                        })
-                )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(IUrls.USER + "/**").hasAnyRole(IRoles.ROLE_ADMIN, IRoles.ROLE_USER)
                         .requestMatchers(IUrls.ADMIN + "/**").hasRole(IRoles.ROLE_ADMIN)

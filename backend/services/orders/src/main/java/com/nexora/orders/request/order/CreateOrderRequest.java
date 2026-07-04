@@ -1,6 +1,7 @@
 package com.nexora.orders.request.order;
 
 import com.nexora.orders.request.orderItems.OrderItemRequest;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,6 +13,9 @@ public record CreateOrderRequest(
         String userProfileUid,
 
         @NotEmpty(message = "Order must contain at least one item")
-        List<OrderItemRequest> items
+        List<OrderItemRequest> items,
+
+        @NotNull(message ="Total amount to be paid can not be blank")
+        Double totalAmount
 ) {
 }

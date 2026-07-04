@@ -7,7 +7,18 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 function CartProduct({ item }) {
   const [counter, setCounter] = useState(1);
   const dispatcher = useDispatch();
-  const { uid, name, brand, description, url, size, color, price } = item;
+  const {
+    uid,
+    name,
+    availableQuantity,
+    brand,
+    description,
+    url,
+    size,
+    color,
+    price,
+  } = item;
+
   const favorite = useSelector(
     (store) => store.favorite.wishListProduct,
     shallowEqual,
@@ -22,6 +33,7 @@ function CartProduct({ item }) {
           <img src={url} className="w-32 h-32 object-cover rounded-lg" alt="" />
           <QuantitySelector
             quantity={counter}
+            availableQuantity={availableQuantity}
             onIncrease={() => {
               dispatcher({
                 type: "CHANGE_QUANTITY",

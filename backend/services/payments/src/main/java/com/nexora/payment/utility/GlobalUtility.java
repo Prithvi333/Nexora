@@ -33,6 +33,7 @@ public class GlobalUtility {
     public static PaymentResponse convertFromPaymentToPaymentResponse(Payment payment) {
         return PaymentResponse.builder()
                 .paymentId(payment.getPaymentId())
+                .gatewayOrderId(payment.getGatewayOrderId())
                 .gatewayPaymentId(payment.getGatewayPaymentId())
                 .gatewayName(payment.getGatewayName())
                 .createdAt(payment.getCreatedAt())

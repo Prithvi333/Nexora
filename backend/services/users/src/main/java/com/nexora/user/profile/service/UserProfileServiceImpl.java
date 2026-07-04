@@ -102,9 +102,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileResponse fetchUserProfile(String userProfileUid) {
-        log.debug("Fetching user profile data for UID: {}", userProfileUid);
-        UserProfile userProfile = getUserProfile(userProfileUid);
+    public UserProfileResponse fetchUserProfile(String email) {
+        log.debug("Fetching user profile data for email: {}", email);
+        UserProfile userProfile = getUserProfileByEmail(email);
         return GlobalUtils.convertFromUserProfileToUserProfileResponse(userProfile);
     }
 
@@ -124,7 +124,18 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.trace("Querying user profile via Composite Keys - ProfileUID: {}, UserUID: {}", userProfileUid, userUid);
         return userProfileRepository.findByUidAndUserUid(userProfileUid, userUid).orElseThrow(() -> {
             log.warn("Profile fetch failed. No record found for ProfileUID: {} linked to UserUID: {}", userProfileUid, userUid);
-            return new UserProfileNotFound(userProfileUid);
+            return new UserProfileNotFound("User profile not found with uid " + userProfileUid + "");
         });
     }
+
+    private UserProfile getUserProfileByEmail(String email) {
+        String userUid = GlobalUtils.getLoggedInUserDetails().userUid();
+        log.trace("Querying user profile via Composite Keys - email: {}, email: {}", email, userUid);
+        return userProfileRepository.findByEmailAndUserUid(email, userUid).orElseThrow(() -> {
+            log.warn("Profile fetch failed. No record found for email: {} linked to UserUID: {}", email, userUid);
+            return new UserProfileNotFound("User profile not found with email " + email + "");
+        });
+    }
+
+
 }

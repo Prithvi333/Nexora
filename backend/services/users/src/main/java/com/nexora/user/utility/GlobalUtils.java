@@ -39,6 +39,7 @@ public class GlobalUtils {
 
     public static UserProfileResponse convertFromUserProfileToUserProfileResponse(UserProfile userProfile) {
         return UserProfileResponse.builder().firstName(userProfile.getFirstName())
+                .uid(userProfile.getUid())
                 .lastName(userProfile.getLastName())
                 .email(userProfile.getEmail())
                 .userUid(userProfile.getUserUid())

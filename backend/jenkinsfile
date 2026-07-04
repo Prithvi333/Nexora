@@ -50,7 +50,7 @@ pipeline {
         stage('Build & Deploy Eureka') {
             when { changeset "services/eureka/**" }
             steps {
-                dir('services/eureka') {
+                dir('backend/services/eureka') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-eureka .'
                     sh 'docker push prithvi069/nexora-eureka'
@@ -63,7 +63,7 @@ pipeline {
         stage('Build & Deploy Gateway') {
             when { changeset "services/gateway/**" }
             steps {
-                dir('services/gateway') {
+                dir('backend/services/gateway') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-gateway .'
                     sh 'docker push prithvi069/nexora-gateway'
@@ -76,7 +76,7 @@ pipeline {
         stage('Build & Deploy Auth') {
             when { changeset "services/auth/**" }
             steps {
-                dir('services/auth') {
+                dir('backend/services/auth') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-auth .'
                     sh 'docker push prithvi069/nexora-auth'
@@ -87,7 +87,7 @@ pipeline {
 
         // ===================== USERS =====================
         stage('Build & Deploy Users') {
-            when { changeset "services/users/**" }
+            when { changeset "backend/services/users/**" }
             steps {
                 dir('services/users') {
                     sh 'mvn clean package -DskipTests'
@@ -102,7 +102,7 @@ pipeline {
         stage('Build & Deploy Products') {
             when { changeset "services/products/**" }
             steps {
-                dir('services/products') {
+                dir('backend/services/products') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-products .'
                     sh 'docker push prithvi069/nexora-products'
@@ -113,9 +113,9 @@ pipeline {
 
         // ===================== ORDERS =====================
         stage('Build & Deploy Orders') {
-            when { changeset "services/orders/**" }
+            when { changeset "backend/services/orders/**" }
             steps {
-                dir('services/orders') {
+                dir('backend/services/orders') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-orders .'
                     sh 'docker push prithvi069/nexora-orders'
@@ -126,9 +126,9 @@ pipeline {
 
         // ===================== PAYMENTS =====================
         stage('Build & Deploy Payments') {
-            when { changeset "services/payments/**" }
+            when { changeset "backend/services/payments/**" }
             steps {
-                dir('services/payments') {
+                dir('backend/services/payments') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-payments .'
                     sh 'docker push prithvi069/nexora-payments'
@@ -139,9 +139,9 @@ pipeline {
 
         // ===================== NOTIFICATIONS =====================
         stage('Build & Deploy Notifications') {
-            when { changeset "services/notifications/**" }
+            when { changeset "backend/services/notifications/**" }
             steps {
-                dir('services/notifications') {
+                dir('backend/services/notifications') {
                     sh 'mvn clean package -DskipTests'
                     sh 'docker build -t prithvi069/nexora-notifications .'
                     sh 'docker push prithvi069/nexora-notifications'

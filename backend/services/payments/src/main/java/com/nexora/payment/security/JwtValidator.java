@@ -32,7 +32,7 @@ public class JwtValidator extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
-        String token = response.getHeader("Authorization").substring(7);
+        String token = request.getHeader("Authorization").substring(7);
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseClaimsJws(token).getBody();
             setAuthenticationContext(claims);

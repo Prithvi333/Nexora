@@ -25,6 +25,8 @@ public record PaymentResponse(
 
         String gatewayPaymentId,
 
+        String gatewayOrderId,
+
         LocalDateTime createdAt,
 
         LocalDateTime updatedAt

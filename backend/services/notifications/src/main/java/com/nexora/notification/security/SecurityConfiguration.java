@@ -33,26 +33,6 @@ public class SecurityConfiguration {
                         )
                 )
 
-                .cors(cors ->
-                        cors.configurationSource(request -> {
-
-                            CorsConfiguration config =
-                                    new CorsConfiguration();
-                            config.setAllowCredentials(true);
-                            config.setAllowedOrigins(List.of("*"));
-
-                            config.setAllowedMethods(
-                                    List.of("*")
-                            );
-
-                            config.setAllowedHeaders(
-                                    List.of("Authorization")
-                            );
-
-                            return config;
-                        })
-                )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(IUrls.NOTIFICATION + "/**").hasRole(IRoles.ROlE_ADMIN)
                         .anyRequest().authenticated()

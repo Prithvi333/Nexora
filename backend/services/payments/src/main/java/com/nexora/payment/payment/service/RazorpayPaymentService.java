@@ -7,6 +7,7 @@ import com.nexora.payment.payment.gateway.PaymentGateway;
 import com.nexora.payment.payment.model.Payment;
 import com.nexora.payment.payment.repository.PaymentRepository;
 import com.nexora.payment.request.payment.CreatePaymentRequest;
+import com.nexora.payment.response.payment.PaymentResponse;
 import com.nexora.payment.utility.GlobalUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,9 +58,17 @@ public class RazorpayPaymentService implements PaymentService {
             paymentBuilder.gatewayOrderId(razorpayOrderId);
 
         } catch (Exception e) {
-            throw new PaymentException("Unable to create Razorpay order");
+
+            throw new PaymentException("Unable to create Razorpay order: "+e.getMessage());
         }
 
         paymentRepository.save(paymentBuilder.build());
+    }
+
+    @Override
+    public PaymentResponse getPaymentResponseByOrderUid(String orderUid) {
+        String userUId = GlobalUtility.getLoggedInUserDetails().userUid();
+        Payment payment =  paymentRepository.findByOrderUidAndUserUid(orderUid,userUId).orElseThrow(() -> new PaymentException("Payment not found with orderUid: "+orderUid));
+        return  GlobalUtility.convertFromPaymentToPaymentResponse(payment);
     }
 }

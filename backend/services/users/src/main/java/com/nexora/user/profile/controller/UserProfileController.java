@@ -33,10 +33,10 @@ public class UserProfileController {
 
     @GetMapping
     @Operation(summary = "Fetch profile", description = "Used to fetch user specific profile")
-    public ResponseEntity<UserProfileResponse> fetchUserProfile(@RequestParam("userProfileUid") String userProfileUid) {
-        logger.info("Received request to fetch user profile with userProfileUid: {}", userProfileUid);
-        ResponseEntity<UserProfileResponse> response = new ResponseEntity<>(userProfileService.fetchUserProfile(userProfileUid), HttpStatus.OK);
-        logger.info("User profile fetched successfully for userProfileUid: {}", userProfileUid);
+    public ResponseEntity<UserProfileResponse> fetchUserProfile(@RequestParam("email") String email) {
+        logger.info("Received request to fetch user profile with email: {}", email);
+        ResponseEntity<UserProfileResponse> response = new ResponseEntity<>(userProfileService.fetchUserProfile(email), HttpStatus.OK);
+        logger.info("User profile fetched successfully for email: {}", email);
         return response;
     }
 
