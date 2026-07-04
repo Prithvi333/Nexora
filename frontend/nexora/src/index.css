@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap");
+@import "tailwindcss";
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+.nav-bg-image {
+  background-image: url("/public/images/nav-bg-image.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.ps {
+  background-image: url("/public/images/ps.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.my-container {
+  @apply p-5 container mx-auto w-full;
+}
