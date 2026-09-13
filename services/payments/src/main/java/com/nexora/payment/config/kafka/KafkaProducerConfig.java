@@ -1,4 +1,4 @@
-package com.nexora.auth.config.kafka;
+package com.nexora.payment.config.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

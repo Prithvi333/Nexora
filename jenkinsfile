@@ -1,0 +1,168 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'mvn'
+    }
+
+    stages {
+
+        // ===================== CHECKOUT =====================
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Prithvi333/Nexora.git'
+            }
+        }
+
+        // ===================== DETECT CHANGES =====================
+        stage('Detect Changes') {
+            steps {
+                script {
+                    sh "git fetch origin main"
+
+                    env.CHANGED_FILES = sh(
+                        script: "git diff --name-only origin/main HEAD || true",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Changed files:\n${env.CHANGED_FILES}"
+                }
+            }
+        }
+
+        // ===================== DOCKER LOGIN (ONCE) =====================
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        // ===================== EUREKA =====================
+        stage('Build & Deploy Eureka') {
+            when { changeset "services/eureka/**" }
+            steps {
+                dir('services/eureka') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-eureka .'
+                    sh 'docker push prithvi069/nexora-eureka'
+                }
+                sh 'docker service update --image prithvi069/nexora-eureka nexora_eureka'
+            }
+        }
+
+        // ===================== GATEWAY =====================
+        stage('Build & Deploy Gateway') {
+            when { changeset "services/gateway/**" }
+            steps {
+                dir('services/gateway') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-gateway .'
+                    sh 'docker push prithvi069/nexora-gateway'
+                }
+                sh 'docker service update --image prithvi069/nexora-gateway nexora_gateway'
+            }
+        }
+
+        // ===================== AUTH =====================
+        stage('Build & Deploy Auth') {
+            when { changeset "services/auth/**" }
+            steps {
+                dir('services/auth') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-auth .'
+                    sh 'docker push prithvi069/nexora-auth'
+                }
+                sh 'docker service update --image prithvi069/nexora-auth nexora_auth'
+            }
+        }
+
+        // ===================== USERS =====================
+        stage('Build & Deploy Users') {
+            when { changeset "services/users/**" }
+            steps {
+                dir('services/users') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-users .'
+                    sh 'docker push prithvi069/nexora-users'
+                }
+                sh 'docker service update --image prithvi069/nexora-users nexora_users'
+            }
+        }
+
+        // ===================== PRODUCTS =====================
+        stage('Build & Deploy Products') {
+            when { changeset "services/products/**" }
+            steps {
+                dir('services/products') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-products .'
+                    sh 'docker push prithvi069/nexora-products'
+                }
+                sh 'docker service update --image prithvi069/nexora-products nexora_products'
+            }
+        }
+
+        // ===================== ORDERS =====================
+        stage('Build & Deploy Orders') {
+            when { changeset "services/orders/**" }
+            steps {
+                dir('services/orders') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-orders .'
+                    sh 'docker push prithvi069/nexora-orders'
+                }
+                sh 'docker service update --image prithvi069/nexora-orders nexora_orders'
+            }
+        }
+
+        // ===================== PAYMENTS =====================
+        stage('Build & Deploy Payments') {
+            when { changeset "services/payments/**" }
+            steps {
+                dir('services/payments') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-payments .'
+                    sh 'docker push prithvi069/nexora-payments'
+                }
+                sh 'docker service update --image prithvi069/nexora-payments nexora_payments'
+            }
+        }
+
+        // ===================== NOTIFICATIONS =====================
+        stage('Build & Deploy Notifications') {
+            when { changeset "services/notifications/**" }
+            steps {
+                dir('services/notifications') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-notifications .'
+                    sh 'docker push prithvi069/nexora-notifications'
+                }
+                sh 'docker service update --image prithvi069/nexora-notifications nexora_notifications'
+            }
+        }
+
+        // ===================== SWARM CHECK =====================
+        stage('Ensure Swarm') {
+            steps {
+                sh '''
+                    if ! docker info | grep -i "Swarm: active"; then
+                        echo "Initializing Swarm..."
+                        docker swarm init
+                        docker stack deploy -c docker-compose.yml nexora
+                    else
+                        echo "Swarm already active"
+                    fi
+                '''
+            }
+        }
+    }
+}

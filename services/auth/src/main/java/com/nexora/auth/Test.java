@@ -14,6 +14,6 @@ public class Test implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        userService.registerUser(new RegisterRequest("prithvi", "pthakur.pt36@gmail.com", "prithvi121"));
+//       userService.registerUser(new RegisterRequest("prithvi", "pthakur.pt36@gmail.com", "prithvi121"));
     }
 }
