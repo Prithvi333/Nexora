@@ -2,15 +2,18 @@ package com.nexora.ai.config;
 
 import com.nexora.ai.advisor.TokenUsageAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
 
 @Configuration
-public class AiClientConfig {
+public class AiConfig {
 
 
     @Value("classpath:templates/ai/systemMessage.st")
@@ -22,6 +25,13 @@ public class AiClientConfig {
                 .defaultAdvisors(List.of(tokenUsageAdvisor))
                 .defaultSystem(systemMessage)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    public EmbeddingModel embeddingModel(
+            @Qualifier("titanEmbeddingModel") EmbeddingModel titanEmbeddingModel) {
+        return titanEmbeddingModel;
     }
 
 
