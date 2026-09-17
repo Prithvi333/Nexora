@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   mysql:
     image: mysql:latest
     environment:
@@ -85,11 +86,20 @@ services:
       - "8089:8089"
     environment:
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}  
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
     networks:
       - nexora-network
     depends_on:
-      - eureka   
+      - eureka
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    networks:
+      - nexora-network
 
   users:
     image: prithvi069/nexora-users:latest
