@@ -124,6 +124,20 @@ pipeline {
             }
         }
 
+        // ===================== AI =====================
+        stage('Build & Deploy ai') {
+            when { changeset "services/ai/**" }
+            steps {
+                dir('services/ai') {
+                    sh 'mvn clean package -DskipTests'
+                    sh 'docker build -t prithvi069/nexora-ai .'
+                    sh 'docker push prithvi069/nexora-ai'
+                }
+                sh 'docker service update --image prithvi069/nexora-ai nexora_ai'
+            }
+        }
+
+
         // ===================== PAYMENTS =====================
         stage('Build & Deploy Payments') {
             when { changeset "services/payments/**" }
