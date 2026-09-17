@@ -79,6 +79,18 @@ services:
     depends_on:
       - eureka
 
+  ai:
+    image: prithvi069/nexora-ai:latest
+    ports:
+      - "8089:8089"
+    environment:
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}  
+    networks:
+      - nexora-network
+    depends_on:
+      - eureka   
+
   users:
     image: prithvi069/nexora-users:latest
     ports:
