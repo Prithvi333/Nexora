@@ -1,6 +1,6 @@
 # 🚀 Nexora
 
-**Nexora** is a cloud-native, enterprise-grade e-commerce platform built using a modern microservices architecture. The project is designed to simulate how large-scale commerce platforms operate by leveraging distributed systems, cloud infrastructure, containerization, event-driven communication, and DevOps automation.
+**Nexora** is a cloud-native, enterprise-grade e-commerce platform built using a modern microservices architecture. The project is designed to simulate how large-scale commerce platforms operate by leveraging distributed systems, cloud infrastructure, containerization, event-driven communication, DevOps automation, and AI-powered features.
 
 Nexora focuses on scalability, security, fault tolerance, maintainability, and real-world software engineering practices.
 
@@ -13,11 +13,12 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 * Implement secure Authentication & Authorization
 * Design scalable and resilient distributed systems
 * Apply DevOps and Cloud Engineering best practices
+* Integrate AI-powered capabilities into e-commerce workflows
 * Showcase real-world backend engineering skills
 
 ## 🏗️ System Architecture
 
-```text id="g2izvo"
+```text
                                       ┌─────────────┐
                                       │   Client    │
                                       └──────┬──────┘
@@ -42,6 +43,29 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
 │ Auth DB │ │ User DB │ │ProductDB│ │ OrderDB │ │PaymentDB│
 └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
+
+                         ┌─────────────────────┐
+                         │      AI Service     │
+                         │                     │
+                         │ Product Description │
+                         │ Smart Search        │
+                         │ Recommendations     │
+                         │ Review Summarization │
+                         │ AI Chat             │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │ AWS Bedrock / LLM   │
+                         │ Spring AI           │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │      Qdrant         │
+                         │   Vector Database   │
+                         │ Product Embeddings  │
+                         └─────────────────────┘
 
      └───────────┬───────────┬───────────┬───────────┬───────────┘
                  │           │           │           │
@@ -71,7 +95,6 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
               │            CI/CD               │
               └────────────────────────────────┘
 ```
-
 
 ## 🔐 Core Features
 
@@ -121,6 +144,14 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 * Event-Based Notifications
 * Order Status Updates
 
+### 🤖 AI-Powered Features
+
+* **AI Product Description Generation** — Generates product descriptions automatically from product names using an LLM.
+* **AI Smart Product Search** — Uses embeddings and vector similarity search to find semantically relevant products based on natural-language queries.
+* **Personalized Product Recommendations** — Recommends relevant products using user purchase history and product similarity.
+* **AI Review Summarization** — Summarizes customer reviews to provide a concise overview of product feedback.
+* **AI Chat Assistant** — Provides a conversational interface for product-related queries using natural language.
+
 ### Platform Features
 
 * Service Discovery
@@ -129,6 +160,7 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 * Redis Caching
 * Kafka Event Streaming
 * Monitoring & Observability
+* Vector Search using Qdrant
 
 ---
 
@@ -143,10 +175,20 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 * Spring Data JPA
 * Hibernate
 
+### AI
+
+* Spring AI
+* AWS Bedrock
+* Large Language Models (LLMs)
+* Embeddings
+* Qdrant Vector Database
+* Semantic / Similarity Search
+
 ### Databases
 
 * MySQL
 * Redis
+* Qdrant
 
 ### Messaging
 
@@ -172,16 +214,17 @@ Nexora focuses on scalability, security, fault tolerance, maintainability, and r
 
 ## 📦 Microservices
 
-| Service              | Responsibility                      |
-| -------------------- | ----------------------------------- |
-| API Gateway          | Entry point for all client requests |
-| Auth Service         | Authentication & Authorization      |
-| User Service         | User management                     |
-| Product Service      | Product catalog management          |
-| Order Service        | Order processing                    |
-| Payment Service      | Payment workflows                   |
-| Notification Service | Email & notifications               |
-| Discovery Server     | Service registration & discovery    |
+| Service              | Responsibility                                                            |
+| -------------------- | ------------------------------------------------------------------------- |
+| API Gateway          | Entry point for all client requests                                       |
+| Auth Service         | Authentication & Authorization                                            |
+| User Service         | User management                                                           |
+| Product Service      | Product catalog management                                                |
+| Order Service        | Order processing                                                          |
+| Payment Service      | Payment workflows                                                         |
+| Notification Service | Email & notifications                                                     |
+| AI Service           | AI-powered search, recommendations, descriptions, review summaries & chat |
+| Discovery Server     | Service registration & discovery                                          |
 
 ---
 
@@ -233,7 +276,7 @@ AWS Deployment
 * Elasticsearch Integration
 * Distributed Tracing
 * API Analytics Dashboard
-* Recommendation Engine
+* Advanced Recommendation Engine
 * AI-Powered Product Suggestions
 * Multi-Tenant Support
 * Event Sourcing
@@ -255,9 +298,15 @@ Through Nexora, I explored:
 * Distributed Systems
 * Event-Driven Architecture
 * Scalable Backend Development
+* Spring AI & LLM Integration
+* AWS Bedrock
+* Embeddings & Vector Databases
+* Semantic Search
+* AI-Powered Recommendations
+* Conversational AI
 
 ---
 
 ## ⭐ Why Nexora?
 
-Nexora is more than a CRUD application. It is a complete cloud-native commerce ecosystem designed to replicate real-world enterprise architecture while demonstrating backend engineering, system design, cloud deployment, and DevOps expertise.
+Nexora is more than a CRUD application. It is a complete cloud-native commerce ecosystem designed to replicate real-world enterprise architecture while demonstrating backend engineering, system design, cloud deployment, DevOps, and AI integration expertise.
